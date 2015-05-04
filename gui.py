@@ -7,10 +7,11 @@
 #
 #  Derived Matthew Uy's cube_solver.cpp program 
 #  https://github.com/matt2uy/Cube-Solver
+#
 
 
 from Tkinter import *
-import time
+import time #  TODO is this used?
 import sys
 
 yellow_face = ['y', 'y', 'y',
@@ -37,36 +38,7 @@ orange_face = ['o', 'o', 'o',
                'o', 'o', 'o',
                'o', 'o', 'o']
 
-
-raw_cube_string = ""
-
-def generate_raw_cube():
-	raw_cube_string = ""
-	for color in yellow_face:
-		raw_cube_string = raw_cube_string + color
-		#catenate 'raw_cube_string' with yellow_face[0], [1], on and on.....
-
-	for color in white_face:
-		raw_cube_string = raw_cube_string + color
-		#catenate 'raw_cube_string' with yellow_face[0], [1], on and on.....
-	
-	for color in red_face:
-		raw_cube_string = raw_cube_string + color
-		#catenate 'raw_cube_string' with yellow_face[0], [1], on and on.....
-	
-	for color in blue_face:
-		raw_cube_string = raw_cube_string + color
-		#catenate 'raw_cube_string' with yellow_face[0], [1], on and on.....
-
-	for color in green_face:
-		raw_cube_string = raw_cube_string + color
-		#catenate 'raw_cube_string' with yellow_face[0], [1], on and on.....
-
-	for color in orange_face:
-		raw_cube_string = raw_cube_string + color
-		#catenate 'raw_cube_string' with yellow_face[0], [1], on and on.....
-	return raw_cube_string
-
+color_totals = [0]*6
 
 ###### Gui functions ########
 def enter_yellow_face():
@@ -532,11 +504,13 @@ def print_cube():
 
 def legal_cube_check():
     if yellow_face[4] != 'y' or white_face[4] != 'w' or blue_face[4] != 'b' or red_face[4] != 'r' or green_face[4] != 'g' or orange_face[4] != 'o': 
-        print "Incorrect center pieces, Try Again"
-        sys.exit()
-
-
-    # elif [check if there are 9 of each color]
+        print "ERROR: Incorrect center pieces, Try Again"
+        sys.exit(1)
+    for i, color in enumerate(color_totals):
+		#  Check if there are 8 facets per color (excluding centers). 
+		if color != 8:
+			print "ERROR: Total number of color (",i,") pieces was", color, "out 8."
+			sys.exit(1)
 
 def enter_cube():
     enter_yellow_face()
@@ -565,17 +539,24 @@ def to_facets():
 			facet = ''
 			if facet_color is 'w':
 				facet = 'U'
+				color_totals[0] += 1
 			elif facet_color is 'g':
 				facet = 'L'
+				color_totals[1] += 1
 			elif facet_color is 'r':
 				facet = 'F'
+				color_totals[2] += 1
 			elif facet_color is 'b':
 				facet = 'R'
+				color_totals[3] += 1
 			elif facet_color is 'o':
 				facet = 'B'
+				color_totals[4] += 1
 			elif facet_color is 'y':
 				facet = 'D'
+				color_totals[5] += 1
 			facets[position_no_centers] = facet
+	legal_cube_check()
 	return facets
 	
 
@@ -594,12 +575,11 @@ http://upload.wikimedia.org/wikipedia/commons/thumb/1/19/Rubik%E2%80%99s_cube_co
 +----------------+--------------+
 """
 	enter_cube()
-	legal_cube_check()
-	print_cube()
 
 	facets = {x:'#' for x in range(1,49)} #  Create dict to hold facets
 	position = 0
 	position_no_centers = 0
+
 	for face in [white_face, green_face,  red_face, 
 				 blue_face,  orange_face, yellow_face]:
 		for facet_color in face:
@@ -611,19 +591,26 @@ http://upload.wikimedia.org/wikipedia/commons/thumb/1/19/Rubik%E2%80%99s_cube_co
 			facet = ''
 			if facet_color is 'w':
 				facet = 'U'
+				color_totals[0] += 1
 			elif facet_color is 'g':
 				facet = 'L'
+				color_totals[1] += 1
 			elif facet_color is 'r':
 				facet = 'F'
+				color_totals[2] += 1
 			elif facet_color is 'b':
 				facet = 'R'
+				color_totals[3] += 1
 			elif facet_color is 'o':
 				facet = 'B'
+				color_totals[4] += 1
 			elif facet_color is 'y':
 				facet = 'D'
+				color_totals[5] += 1
 			facets[position_no_centers] = facet
+	legal_cube_check()
 	print facets
-	return facets
+	return 0
 
 if __name__ == '__main__':
 	main()
