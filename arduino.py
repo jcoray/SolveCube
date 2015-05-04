@@ -76,6 +76,7 @@ ARS2 = 180
 def U1():
 	#  Rotate so that this face is in one of the claws
 	OCServo1.write(OS1)
+	time.sleep(.5)
 	RServo2.write(RS2)
 	OCServo1.write(CS1)
 	OCServo2.write(OS2)
