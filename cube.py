@@ -3,7 +3,8 @@
 #
 #  cube.py
 #  
-#  Copyright 2015 Jakob Coray <jakob2016@gmail.com>
+#  Copyright 2015 Jakob Coray <jakob2016@gmail.com> and 
+#                 Gabriel Norris <gabriel@Thoth>
 #  
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -20,7 +21,10 @@
 #  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 #  MA 02110-1301, USA.
 #  
-#  
+
+import subprocess
+import gui_1 as gui #  Input the cube
+import arduino
 
 class Cube(object):
 	mappings = {'UF':[7,18],  'UR':[5,26],  'UB':[2,34],  'UL':[4,10], 
@@ -39,6 +43,9 @@ class Cube(object):
 			facets = {x:'#' for x in range(1,49)} #  Create dict to hold facets
 		self.facets = facets
 		self.cubies = cubies
+	
+	def cubies_arg(self):
+		return ' '.join(self.cubies) #  String to send to solver program
 		
 	def set_cubies(self):
 		buffer_cubies = list()
@@ -48,11 +55,12 @@ class Cube(object):
 				buffer_cubie += self.facets[facet]
 			buffer_cubies.append(buffer_cubie)
 		self.cubies = buffer_cubies
-		return ' '.join(self.cubies) #  string to send to solver program
+		return self.cubies_arg()
 	
 	def print_cubies(self):
 		print 'Position:', ' '.join(self.ordered_cubies)
-		print 'Scramble:', ' '.join(self.cubies)
+		print 'Scramble:', self.cubies_arg()
+	
 	
 	def print_facets(self, method = None):
 		if method is None:
@@ -77,55 +85,19 @@ class Cube(object):
                 +----+----+----+
                 | 46 | 47 | 48 |
                 +----+----+----+"""
-		else:
-			try:
-				print """
-                +----+----+----+
-                | {}  | {}  | {}  |
-                +----+----+----+
-                | {}  | U  | {}  |
-                +----+----+----+
-                | {}  | {}  | {}  |
-+----+----+----++----+----+----++----+----+----++----+----+----+
-| {}  | {} | {} || {} | {} | {} || {} | {} | {} || {} | {} | {} |
-+----+----+----++----+----+----++----+----+----++----+----+----+
-| {} | L  | {} || {} | F  | {} || {} | R  | {} || {} | B  | {} |
-+----+----+----++----+----+----++----+----+----++----+----+----+
-| {} | {} | {} || {} | {} | {} || {} | {} | {} || {} | {} | {} |
-+----+----+----++----+----+----++----+----+----++----+----+----+
-                +----+----+----+
-                | {} | {} | {} |
-                +----+----+----+
-                | {} | D  | {} |
-                +----+----+----+
-                | {} | {} | {} |
-                +----+----+----+""".format(self.facets)
-			except:
-				print "Error: still working on printing facet positions"
-	
-	def fill(self):
-		print'd'
+
 
 def main():
-	#import csv
-	#facets = {}
-	#with open('solve.csv', mode='r') as infile:
-		#reader = csv.reader(infile)
-		#facets  = dict((int(rows[0]),rows[1].upper()) for rows in reader)
-	#rubik = Cube(facets)
-	#print rubik.set_cubies()
-
-	import gui
 	gui.enter_cube()
-	gui.legal_cube_check()
-	gui.print_cube()
 	input_facets = gui.to_facets()
 	rubik = Cube(input_facets)
 	print rubik.set_cubies()
 	rubik.print_cubies()
-	
+	#  The solver agorithom is written in c++
+	solution = subprocess.check_output("./cubecompo " + rubik.cubies_arg(), shell=True)
+	print "Solution:", solution
+	arduino.solve(solution)
 	return 0
 
 if __name__ == '__main__':
 	main()
-
