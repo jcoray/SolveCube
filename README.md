@@ -1,5 +1,5 @@
 # SolveCube
-A Raspberry Pi controls an Arduino to solve a Rubik's Cube 
+A fast Raspberry Pi and Arduino based Rubik's Cube solving robot.
 
 Created by Jakob Coray and Gabriel Norris 
 
