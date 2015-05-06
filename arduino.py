@@ -28,8 +28,7 @@ import time
 
 class Cube(object):
 	def __init__(self):
-		self.orient = ['D', 'F', 'R', 'B', 'L', 'T',] # TODO Does this really need to be it's own class?
-
+		self.orient = {'D':'D', 'F':'F', 'R':'R', 'B':'B', 'L':'L', 'U':'U',} # TODO Does this really need to be it's own class?
 class Claw(object):
 	def __init__(self, arduino, wrist_pin, hand_pin, positions, hand_delay, quarter_turn_delay):
 		arduino.servo_config(wrist_pin, 1000, 2000, 90) 
@@ -81,7 +80,7 @@ class Robot(object):
 		self.claw_down = Claw(arduino, pins[0], pins[1], positions[0:4], delay_hand, quarter_turn_delay)
 		print "Done."
 		sys.stdout.write("    Configuring up_claw... ") #  Print w/o \n
-		self.claw_down = Claw(arduino, pins[2], pins[3], positions[5:9], delay_hand, quarter_turn_delay)
+		self.claw_right = Claw(arduino, pins[2], pins[3], positions[5:9], delay_hand, quarter_turn_delay)
 		print "Done."
 		print "Configured."
 		
@@ -97,39 +96,53 @@ class Robot(object):
 		ARS2 = 180 #  Degrees
 		OCDelay = .25 #  Seconds
 		RDelay = .5 #  Seconds
-	def rotate_90(face):
-		buffer_orient = []
-		face_orient
-		for orient, iiface in enumerate(self.cube.orient):
-			if face = iiface:
-				face_orient = orient
 		
-		if face_orient is 0: #  Face held in claw_down
+	def rotate_90(face):
+		buffer_orient = {'D':'D', 'F':'F', 'R':'R', 'B':'B', 'L':'L', 'U':'U',}
+		face_orient = self.cube.orient 
+		#  Find ...
+		for orient in self.cube.orient:
+			if face is self.cube.orient[orient]:
+				face_orient = self.cube.orient[orient]
+		if face_orient is 'D': #  Face held in claw_down
 			self.claw_down.quarter_turn()
 			self.claw_down.open_hand()
 			self.claw_down.home_turn()
 			self.claw_down.close_hand()
-			buffer_orient[0] = self.cube.orient[0] #  The face in the claw does not move
-			buffer_orient[1] = self.cube.orient[4] #  L -> F
-			buffer_orient[2] = self.cube.orient[1] #  F -> R
-			buffer_orient[3] = self.cube.orient[2] #  R -> B
-			buffer_orient[4] = self.cube.orient[3] #  B -> L
-			buffer_orient[5] = self.cube.orient[5] #  Top does not move
-		elif face_orient is 1: 
+			buffer_orient['D'] = self.cube.orient['D'] #  The face in the claw does not move
+			buffer_orient['F'] = self.cube.orient['L'] #  L -> F
+			buffer_orient['R'] = self.cube.orient['F'] #  F -> R
+			buffer_orient['B'] = self.cube.orient['R'] #  R -> B
+			buffer_orient['L'] = self.cube.orient['B'] #  B -> L
+			buffer_orient['U'] = self.cube.orient['U'] #  Top does not move
+		elif face_orient is 'F': 
+			self.claw_right.open_hand()
+			self.claw_down.quarter_turn()
+			self.claw_right.close_hand()
+			self.claw_down.open_hand()
+			self.claw_down.home_turn()
+			self.claw_down.close_hand()
+			self.claw_right.quarter_turn()
+			self.claw_right.open_hand()
+			self.claw_right.home_turn()
+			self.claw_right.close_hand()
+		elif face_orient is 'R': #  Face held in claw_right
+			self.claw_right.quarter_turn()
+			self.claw_right.open_hand()
+			self.claw_right.home_turn()
+			self.claw_right.close_hand()
+		elif face_orient is 'B':
 			pass
-		elif face_orient is 2: #  Face held in claw_down
-			self.claw_up.quarter_turn()
-			self.claw_up.open_hand()
-			self.claw_up.home_turn()
-			self.claw_up.close_hand()
-		elif face_orient is 3:
+		elif face_orient is 'L':
 			pass
-		elif face_orient is 4:
+		elif face_orient is 'U':
 			pass
-		elif face_orient is 5:
-			pass
+		#  Update the orientation. TODO this is not updated for the dict
+		for ii_orient, ii_face in enumerate(buffer_orient):
+			self.cube.orient[ii_orient] = ii_face
+		return self.cube.orient
 		
-		def rotate_180(face):
+	def rotate_180(face): 
 		buffer_orient = []
 		face_orient
 		for orient, iiface in enumerate(self.cube.orient):
@@ -150,10 +163,10 @@ class Robot(object):
 		elif face_orient is 1: 
 			pass
 		elif face_orient is 2: #  Face held in claw_down
-			self.claw_up.half_turn()
-			self.claw_up.open_hand()
-			self.claw_up.home_turn()
-			self.claw_up.close_hand()
+			self.claw_right.half_turn()
+			self.claw_right.open_hand()
+			self.claw_right.home_turn()
+			self.claw_right.close_hand()
 		elif face_orient is 3:
 			pass
 		elif face_orient is 4:
