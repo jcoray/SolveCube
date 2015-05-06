@@ -25,19 +25,10 @@ from pyfirmata import Arduino, util
 #  https://media.readthedocs.org/pdf/pyfirmata/latest/pyfirmata.pdf
 import sys
 import time
+
 class Cube(object):
 	def __init__(self):
-		self.orient = ['D', 'F', 'R', 'B', 'L', 'T',]
-	def rotate_90(self,):
-		#  always rotates clockwise
-			
-		if self.holds_face = 'R': # TODO correct this one
-			buffer_orient[0] = self.cube.orient[0] #  The face in the claw does not move
-			buffer_orient[1] = self.cube.orient[4] #  L -> F
-			buffer_orient[2] = self.cube.orient[1] #  F -> R
-			buffer_orient[3] = self.cube.orient[2] #  R -> B
-			buffer_orient[4] = self.cube.orient[3] #  B -> L
-			buffer_orient[5] = self.cube.orient[5] #  Top does not move
+		self.orient = ['D', 'F', 'R', 'B', 'L', 'T',] # TODO Does this really need to be it's own class?
 
 class Claw(object):
 	def __init__(self, arduino, wrist_pin, hand_pin, positions, hand_delay, quarter_turn_delay):
