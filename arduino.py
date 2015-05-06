@@ -3,7 +3,7 @@
 #
 #  Solution.py
 #  
-#  Copyright 2015 Gabriel Norris <
+#  Copyright 2015 Gabriel Norris
 #                 Jakob Coray <jakob2016@gmail.com>
 #  
 #  This program is free software; you can redistribute it and/or modify
@@ -30,7 +30,6 @@ class Cube(object):
 		self.orient = ['D', 'F', 'R', 'B', 'L', 'T',]
 	def rotate_90(self,):
 		#  always rotates clockwise
-		if self.holds_face = 'D':
 			
 		if self.holds_face = 'R': # TODO correct this one
 			buffer_orient[0] = self.cube.orient[0] #  The face in the claw does not move
@@ -41,7 +40,7 @@ class Cube(object):
 			buffer_orient[5] = self.cube.orient[5] #  Top does not move
 
 class Claw(object):
-	def __init__(self, arduino, wrist_pin, hand_pin, positions, delays):
+	def __init__(self, arduino, wrist_pin, hand_pin, positions, hand_delay, quarter_turn_delay):
 		arduino.servo_config(wrist_pin, 1000, 2000, 90) 
 		arduino.servo_config(hand_pin, 1000, 2000, 90)
 		self.wrist = arduino.digital[wrist_pin]
@@ -53,9 +52,9 @@ class Claw(object):
 		self.open_hand_deg = positions[3]
 		self.close_hand_deg = positions[4]
 		
-		self.quarter_turn_delay = delays[0]
-		self.half_turn_delay = delays[0] * 2
-		self.hand_delay = delays[1] 
+		self.quarter_turn_delay = quarter_turn_delay
+		self.half_turn_delay = quarter_turn_delay * 2
+		self.hand_delay = hand_delay
 		
 	def home_turn(self):
 		self.wrist.write(self.home_turn_deg)
@@ -76,8 +75,8 @@ class Claw(object):
 		
 		
 class Robot(object):
-	def __init__(self, serial_port, pins, positions):
-		sys.stdout.write("Connecting to Arduino...")
+	def __init__(self, serial_port, pins, positions, hand_delay=.25, quarter_turn_delay=.5):
+		sys.stdout.write("Connecting to Arduino...") #  Print w/o \n
 		#  On Linux machines the serial port will be similar 
 		#  to '/dev/ttyACM'. Open up a terminal window and type:
 		#      $_  ls /dev | grep ttyACM 
@@ -88,12 +87,14 @@ class Robot(object):
 		iterator = util.Iterator(arduino)
 		iterator.start()
 		sys.stdout.write("    Configuring down_claw... ") #  Print w/o \n
-		self.claw_down = Claw(arduino, pins[0], pins[1], positions[0:4], delay[0:1])
+		self.claw_down = Claw(arduino, pins[0], pins[1], positions[0:4], delay_hand, quarter_turn_delay)
 		print "Done."
 		sys.stdout.write("    Configuring up_claw... ") #  Print w/o \n
-		self.claw_down = Claw(arduino, pins[2], pins[3], positions[5:9], delay[2:3])
+		self.claw_down = Claw(arduino, pins[2], pins[3], positions[5:9], delay_hand, quarter_turn_delay)
 		print "Done."
 		print "Configured."
+		
+		self.cube = Cube()
 
 		OS1 = 70 #  Degrees
 		CS1 = 40 # max 10 Degrees
@@ -107,21 +108,16 @@ class Robot(object):
 		RDelay = .5 #  Seconds
 	def rotate_90(face):
 		buffer_orient = []
-		#                                 C1   #    C2   #    #    #
-		for orient, iiface in enumerate():
+		face_orient
+		for orient, iiface in enumerate(self.cube.orient):
 			if face = iiface:
 				face_orient = orient
 		
 		if face_orient is 0: #  Face held in claw_down
-			self.claw_down.wrist.write(self.claw_down.quarter_turn)
-			time.sleep(self.quarter_turn_delay)
-			self.claw_down.hand.write(self.claw_down.open_hand)
-			time.sleep(self.hand_delay)
-			self.claw_down.wrist.write(self.claw_down.home_turn)
-			time.sleep(self.quarter_turn_delay)
-			self.claw_down.hand.write(self.claw_down.close_hand)
-			time.sleep(self.hand_delay)
-			
+			self.claw_down.quarter_turn()
+			self.claw_down.open_hand()
+			self.claw_down.home_turn()
+			self.claw_down.close_hand()
 			buffer_orient[0] = self.cube.orient[0] #  The face in the claw does not move
 			buffer_orient[1] = self.cube.orient[4] #  L -> F
 			buffer_orient[2] = self.cube.orient[1] #  F -> R
@@ -129,531 +125,85 @@ class Robot(object):
 			buffer_orient[4] = self.cube.orient[3] #  B -> L
 			buffer_orient[5] = self.cube.orient[5] #  Top does not move
 		elif face_orient is 1: 
-			rotate claw2
-		elif face_orient is 2:
+			pass
+		elif face_orient is 2: #  Face held in claw_down
+			self.claw_up.quarter_turn()
+			self.claw_up.open_hand()
+			self.claw_up.home_turn()
+			self.claw_up.close_hand()
 		elif face_orient is 3:
+			pass
 		elif face_orient is 4:
+			pass
 		elif face_orient is 5:
+			pass
+		
+		def rotate_180(face):
+		buffer_orient = []
+		face_orient
+		for orient, iiface in enumerate(self.cube.orient):
+			if face = iiface:
+				face_orient = orient
+		
+		if face_orient is 0: #  Face held in claw_down
+			self.claw_down.half_turn()
+			self.claw_down.open_hand()
+			self.claw_down.home_turn()
+			self.claw_down.close_hand()
+			buffer_orient[0] = self.cube.orient[0] #  The face in the claw does not move
+			buffer_orient[1] = self.cube.orient[4] #  L -> F
+			buffer_orient[2] = self.cube.orient[1] #  F -> R
+			buffer_orient[3] = self.cube.orient[2] #  R -> B
+			buffer_orient[4] = self.cube.orient[3] #  B -> L
+			buffer_orient[5] = self.cube.orient[5] #  Top does not move
+		elif face_orient is 1: 
+			pass
+		elif face_orient is 2: #  Face held in claw_down
+			self.claw_up.half_turn()
+			self.claw_up.open_hand()
+			self.claw_up.home_turn()
+			self.claw_up.close_hand()
+		elif face_orient is 3:
+			pass
+		elif face_orient is 4:
+			pass
+		elif face_orient is 5:
+			pass
 		
 		#  Update the orientation. 
-		for ii_orient, ii_face in enumerate(buffer_orient);
+		for ii_orient, ii_face in enumerate(buffer_orient):
 			self.cube.orient[ii_orient] = ii_face
 		return self.cube.orient
 
-	def U1(self, ):
+	def solve(self, solution):
+		prev = 0
+		moves = []
+		error_count = 0
+		for char in solution:
+			if char.isdigit():
+				#  Invert the move and add it to the list. E.g. 'U2' -> [2,'U']
+				moves.append([int(char), str(prev)]) 
+			else:
+				prev = char
+		for step in moves:
+			rotations = step[0]
+			face = step[1]
+			if rotations is 1:
+				self.rotate_90(face)
+			elif rotations is 2:
+				self.rotate_180(face)
+			elif rotations is 3:
+				self.rotate_180(face)
+				self.rotate_90(face)
+		print "SOLVED!"
+	
+	def test(self):
+		test_solution = "U1U3 D1D3 R1R3 L1L3 F1F3"
+		print "Testing robot. Test pattern:", test_solution
+		self.solve(test_solution)
 		
-		#  Rotate so that this face is in one of the claws
-		OCServo1.write(OS1); time.sleep(OCDelay)
-		RServo2.write(RS2) ; time.sleep(RDelay)
-		OCServo1.write(CS1); time.sleep(OCDelay)
-		OCServo2.write(OS2); time.sleep(OCDelay)
-		RServo2.write(ARS2); time.sleep(RDelay) #
-		OCServo2.write(CS2); time.sleep(OCDelay)
-		OCServo1.write(OS1); time.sleep(OCDelay)
-		RServo2.write(RS2) ; time.sleep(RDelay)
-		OCServo1.write(CS1); time.sleep(OCDelay)
-		OCServo2.write(OS2); time.sleep(OCDelay)
-		RServo2.write(ARS2); time.sleep(RDelay) #
-		OCServo2.write(CS2); time.sleep(OCDelay)
-		#  close servo
-		#  rotate side prescribed number of times
-		RServo1.write(RS1) ; time.sleep(RDelay) #1
-		OCServo1.write(OS1); time.sleep(OCDelay)
-		RServo1.write(ARS1); time.sleep(RDelay) #
-		OCServo1.write(CS1); time.sleep(OCDelay)
-		#  Return side to original position
-		OCServo1.write(OS1); time.sleep(OCDelay)
-		RServo2.write(RS2) ; time.sleep(RDelay)
-		OCServo1.write(CS1); time.sleep(OCDelay)
-		OCServo2.write(OS2); time.sleep(OCDelay)
-		RServo2.write(ARS2); time.sleep(RDelay) #
-		OCServo2.write(CS2); time.sleep(OCDelay)
-		OCServo1.write(OS1); time.sleep(OCDelay)
-		RServo2.write(RS2) ; time.sleep(RDelay)
-		OCServo1.write(CS1); time.sleep(OCDelay)
-		OCServo2.write(OS2); time.sleep(OCDelay)
-		RServo2.write(ARS2); time.sleep(RDelay) #
-		OCServo2.write(CS2); time.sleep(OCDelay)
-	def U2():
-		#Rotate so that this face is in one of the claws
-		OCServo1.write(OS1); time.sleep(OCDelay)
-		RServo2.write(RS2) ; time.sleep(RDelay)
-		OCServo1.write(CS1); time.sleep(OCDelay)
-		OCServo2.write(OS2); time.sleep(OCDelay)
-		RServo2.write(ARS2); time.sleep(RDelay) #
-		OCServo2.write(CS2); time.sleep(OCDelay)
-		OCServo1.write(OS1); time.sleep(OCDelay)
-		RServo2.write(RS2) ; time.sleep(RDelay)
-		OCServo1.write(CS1); time.sleep(OCDelay)
-		OCServo2.write(OS2); time.sleep(OCDelay)
-		RServo2.write(ARS2); time.sleep(RDelay) #
-		OCServo2.write(CS2); time.sleep(OCDelay)
-		#close servo
-		#rotate side prescribed number of times
-		RServo1.write(RS1) ; time.sleep(RDelay) #1
-		OCServo1.write(OS1); time.sleep(OCDelay)
-		RServo1.write(ARS1); time.sleep(RDelay) #
-		OCServo1.write(CS1); time.sleep(OCDelay)
-		RServo1.write(RS1) ; time.sleep(RDelay) #2
-		OCServo1.write(OS1); time.sleep(OCDelay)
-		RServo1.write(ARS1); time.sleep(RDelay) #
-		OCServo1.write(CS1); time.sleep(OCDelay)
-		#Return side to original position
-		OCServo1.write(OS1); time.sleep(OCDelay)
-		RServo2.write(RS2); time.sleep(RDelay)
-		OCServo1.write(CS1); time.sleep(OCDelay)
-		OCServo2.write(OS2); time.sleep(OCDelay)
-		RServo2.write(ARS2); time.sleep(RDelay) #
-		OCServo2.write(CS2); time.sleep(OCDelay)
-		OCServo1.write(OS1); time.sleep(OCDelay)
-		RServo2.write(RS2) ; time.sleep(RDelay)
-		OCServo1.write(CS1); time.sleep(OCDelay)
-		OCServo2.write(OS2); time.sleep(OCDelay)
-		RServo2.write(ARS2); time.sleep(RDelay) #
-		OCServo2.write(CS2); time.sleep(OCDelay)
-	def U3():
-		#Rotate so that this face is in one of the claws
-		OCServo1.write(OS1); time.sleep(OCDelay)
-		RServo2.write(RS2) ; time.sleep(RDelay)
-		OCServo1.write(CS1); time.sleep(OCDelay)
-		OCServo2.write(OS2); time.sleep(OCDelay)
-		RServo2.write(ARS2); time.sleep(RDelay) #
-		OCServo2.write(CS2); time.sleep(OCDelay)
-		OCServo1.write(OS1); time.sleep(OCDelay)
-		RServo2.write(RS2) ; time.sleep(RDelay)
-		OCServo1.write(CS1); time.sleep(OCDelay)
-		OCServo2.write(OS2); time.sleep(OCDelay)
-		RServo2.write(ARS2); time.sleep(RDelay) #
-		OCServo2.write(CS2); time.sleep(OCDelay)
-		#close servo
-		#rotate side prescribed number of times
-		RServo1.write(RS1) ; time.sleep(RDelay) #1
-		OCServo1.write(OS1); time.sleep(OCDelay)
-		RServo1.write(ARS1); time.sleep(RDelay) #
-		OCServo1.write(CS1); time.sleep(OCDelay)
-		RServo1.write(RS1) ; time.sleep(RDelay) #2
-		OCServo1.write(OS1); time.sleep(OCDelay)
-		RServo1.write(ARS1); time.sleep(RDelay) #
-		OCServo1.write(CS1); time.sleep(OCDelay)
-		RServo1.write(RS1) ; time.sleep(RDelay) #3
-		OCServo1.write(OS1); time.sleep(OCDelay)
-		RServo1.write(ARS1); time.sleep(RDelay) #
-		OCServo1.write(CS1); time.sleep(OCDelay)
-		#Return side to original position
-		OCServo1.write(OS1); time.sleep(OCDelay)
-		RServo2.write(RS2) ; time.sleep(RDelay)
-		OCServo1.write(CS1); time.sleep(OCDelay)
-		OCServo2.write(OS2); time.sleep(OCDelay)
-		RServo2.write(ARS2); time.sleep(RDelay) #
-		OCServo2.write(CS2); time.sleep(OCDelay)
-		OCServo1.write(OS1); time.sleep(OCDelay)
-		RServo2.write(RS2) ; time.sleep(RDelay)
-		OCServo1.write(CS1); time.sleep(OCDelay)
-		OCServo2.write(OS2); time.sleep(OCDelay)
-		RServo2.write(ARS2); time.sleep(RDelay) #
-		OCServo2.write(CS2); time.sleep(OCDelay)
-	def F1():
-		#Rotate so that this face is in one of the claws
-		OCServo2.write(OS2); time.sleep(OCDelay)
-		RServo1.write(RS1) ; time.sleep(RDelay)
-		OCServo2.write(CS2); time.sleep(OCDelay)
-		OCServo1.write(OS1); time.sleep(OCDelay)
-		RServo1.write(ARS1) ; time.sleep(RDelay)
-		OCServo1.write(CS1) ; time.sleep(OCDelay)
-		#rotate side prescribed number of times
-		RServo2.write(RS1) ; time.sleep(RDelay) #1
-		OCServo2.write(OS2); time.sleep(OCDelay)
-		RServo2.write(ARS1); time.sleep(RDelay) #
-		OCServo2.write(CS2); time.sleep(OCDelay)
-		#Return side to original position
-		OCServo2.write(OS2); time.sleep(OCDelay)
-		RServo1.write(RS1); time.sleep(RDelay)
-		OCServo2.write(CS2); time.sleep(OCDelay)
-		OCServo1.write(OS1); time.sleep(OCDelay)
-		RServo1.write(ARS1); time.sleep(RDelay)
-		OCServo1.write(CS1); time.sleep(OCDelay)
-		OCServo2.write(OS2); time.sleep(OCDelay)
-		RServo1.write(RS1); time.sleep(RDelay)
-		OCServo2.write(CS2); time.sleep(OCDelay)
-		OCServo1.write(OS1); time.sleep(OCDelay)
-		RServo1.write(ARS1); time.sleep(RDelay)
-		OCServo1.write(CS1); time.sleep(OCDelay)
-		OCServo2.write(OS2); time.sleep(OCDelay)
-		RServo1.write(RS1); time.sleep(RDelay)
-		OCServo2.write(CS2); time.sleep(OCDelay)
-		OCServo1.write(OS1); time.sleep(OCDelay)
-		RServo1.write(ARS1); time.sleep(RDelay)
-		OCServo1.write(CS1); time.sleep(OCDelay)
-	def F2():
-		#Rotate so that this face is in one of the claws
-		OCServo2.write(OS2); time.sleep(OCDelay)
-		RServo1.write(RS1); time.sleep(RDelay)
-		OCServo2.write(CS2); time.sleep(OCDelay)
-		OCServo1.write(OS1); time.sleep(OCDelay)
-		RServo1.write(ARS1); time.sleep(RDelay)
-		OCServo1.write(CS1); time.sleep(OCDelay)
-		#rotate side prescribed number of times
-		RServo2.write(RS1) ; time.sleep(RDelay) #1
-		OCServo2.write(OS2); time.sleep(OCDelay)
-		RServo2.write(ARS1); time.sleep(RDelay) #
-		OCServo2.write(CS2); time.sleep(OCDelay)
-		RServo2.write(RS1) ; time.sleep(RDelay) #2
-		OCServo2.write(OS2); time.sleep(OCDelay)
-		RServo2.write(ARS1); time.sleep(RDelay) #
-		OCServo2.write(CS2); time.sleep(OCDelay)
-		#Return side to original position
-		OCServo2.write(OS2); time.sleep(OCDelay)
-		RServo1.write(RS1) ; time.sleep(RDelay)
-		OCServo2.write(CS2); time.sleep(OCDelay)
-		OCServo1.write(OS1); time.sleep(OCDelay)
-		RServo1.write(ARS1) ; time.sleep(RDelay)
-		OCServo1.write(CS1) ; time.sleep(OCDelay)
-		OCServo2.write(OS2); time.sleep(OCDelay)
-		RServo1.write(RS1) ; time.sleep(RDelay)
-		OCServo2.write(CS2); time.sleep(OCDelay)
-		OCServo1.write(OS1); time.sleep(OCDelay)
-		RServo1.write(ARS1) ; time.sleep(RDelay)
-		OCServo1.write(CS1) ; time.sleep(OCDelay)
-		OCServo2.write(OS2); time.sleep(OCDelay)
-		RServo1.write(RS1) ; time.sleep(RDelay)
-		OCServo2.write(CS2); time.sleep(OCDelay)
-		OCServo1.write(OS1); time.sleep(OCDelay)
-		RServo1.write(ARS1) ; time.sleep(RDelay)
-		OCServo1.write(CS1) ; time.sleep(OCDelay)
-	def F3():
-		#Rotate so that this face is in one of the claws
-		OCServo2.write(OS2); time.sleep(OCDelay)
-		RServo1.write(RS1); time.sleep(RDelay)
-		OCServo2.write(CS2); time.sleep(OCDelay)
-		OCServo1.write(OS1); time.sleep(OCDelay)
-		RServo1.write(ARS1); time.sleep(RDelay)
-		OCServo1.write(CS1); time.sleep(OCDelay)
-		#rotate side prescribed number of times
-		RServo2.write(RS1) ; time.sleep(RDelay) #1
-		OCServo2.write(OS2); time.sleep(OCDelay)
-		RServo2.write(ARS1); time.sleep(RDelay) #
-		OCServo2.write(CS2); time.sleep(OCDelay)
-		RServo2.write(RS1) ; time.sleep(RDelay) #2
-		OCServo2.write(OS2); time.sleep(OCDelay)
-		RServo2.write(ARS1); time.sleep(RDelay) #
-		OCServo2.write(CS2); time.sleep(OCDelay)
-		RServo2.write(RS1) ; time.sleep(RDelay) #3
-		OCServo2.write(OS2); time.sleep(OCDelay)
-		RServo2.write(ARS1); time.sleep(RDelay) #
-		OCServo2.write(CS2); time.sleep(OCDelay)
-		#Return side to original position?
-		OCServo2.write(OS2); time.sleep(OCDelay)
-		RServo1.write(RS1); time.sleep(RDelay)
-		OCServo2.write(CS2); time.sleep(OCDelay)
-		OCServo1.write(OS1); time.sleep(OCDelay)
-		RServo1.write(ARS1) ; time.sleep(RDelay)
-		OCServo1.write(CS1) ; time.sleep(OCDelay)
-		OCServo2.write(OS2); time.sleep(OCDelay)
-		RServo1.write(RS1); time.sleep(RDelay)
-		OCServo2.write(CS2); time.sleep(OCDelay)
-		OCServo1.write(OS1); time.sleep(OCDelay)
-		RServo1.write(ARS1); time.sleep(RDelay)
-		OCServo1.write(CS1); time.sleep(OCDelay)
-		OCServo2.write(OS2); time.sleep(OCDelay)
-		RServo1.write(RS1); time.sleep(RDelay)
-		OCServo2.write(CS2); time.sleep(OCDelay)
-		OCServo1.write(OS1); time.sleep(OCDelay)
-		RServo1.write(ARS1) ; time.sleep(RDelay)
-		OCServo1.write(CS1) ; time.sleep(OCDelay)
-	def R1():
-		#rotate side prescribed number of times
-		RServo2.write(RS1) ; time.sleep(RDelay) #1
-		OCServo2.write(OS2); time.sleep(OCDelay)
-		RServo2.write(ARS1); time.sleep(RDelay) #
-		OCServo2.write(CS2); time.sleep(OCDelay)
-	def R2():
-		#Rotate so that this face is in one of the claws
-		#close servo
-		#rotate side prescribed number of times
-		RServo2.write(RS1) ; time.sleep(RDelay) #1
-		OCServo2.write(OS2); time.sleep(OCDelay)
-		RServo2.write(ARS1); time.sleep(RDelay) #
-		OCServo2.write(CS2); time.sleep(OCDelay)
-		RServo2.write(RS1) ; time.sleep(RDelay) #2
-		OCServo2.write(OS2); time.sleep(OCDelay)
-		RServo2.write(ARS1); time.sleep(RDelay) #
-		OCServo2.write(CS2); time.sleep(OCDelay)
-		#Return side to original position?
-	def R3():
-		#rotate side prescribed number of times
-		RServo2.write(RS1) ; time.sleep(RDelay) #1
-		OCServo2.write(OS2); time.sleep(OCDelay)
-		RServo2.write(ARS1); time.sleep(RDelay) #
-		OCServo2.write(CS2); time.sleep(OCDelay)
-		RServo2.write(RS1) ; time.sleep(RDelay) #2
-		OCServo2.write(OS2); time.sleep(OCDelay)
-		RServo2.write(ARS1); time.sleep(RDelay) #
-		OCServo2.write(CS2); time.sleep(OCDelay)
-		RServo2.write(RS1) ; time.sleep(RDelay) #3
-		OCServo2.write(OS2); time.sleep(OCDelay)
-		RServo2.write(ARS1); time.sleep(RDelay) #
-		OCServo2.write(CS2); time.sleep(OCDelay)
-		#Return side to original position?
-	def B1():
-		#Rotate so that this face is in one of the claws
-		OCServo1.write(OS1); time.sleep(OCDelay)
-		RServo2.write(RS2)
-		OCServo1.write(CS1); time.sleep(OCDelay)
-		OCServo2.write(OS2); time.sleep(OCDelay)
-		RServo2.write(ARS2); time.sleep(RDelay) #
-		OCServo2.write(CS2); time.sleep(OCDelay)
-		#rotate side prescribed number of times
-		RServo1.write(RS1) ; time.sleep(RDelay) #1
-		OCServo1.write(OS1); time.sleep(OCDelay)
-		RServo1.write(ARS1); time.sleep(RDelay) #
-		OCServo1.write(CS1); time.sleep(OCDelay)
-		#Return side to original position?
-		OCServo1.write(OS1); time.sleep(OCDelay)
-		RServo2.write(RS2) ; time.sleep(RDelay)
-		OCServo1.write(CS1); time.sleep(OCDelay)
-		OCServo2.write(OS2); time.sleep(OCDelay)
-		RServo2.write(ARS2); time.sleep(RDelay) #
-		OCServo2.write(CS2); time.sleep(OCDelay)
-		OCServo1.write(OS1); time.sleep(OCDelay)
-		RServo2.write(RS2) ; time.sleep(RDelay)
-		OCServo1.write(CS1); time.sleep(OCDelay)
-		OCServo2.write(OS2); time.sleep(OCDelay)
-		RServo2.write(ARS2); time.sleep(RDelay) #
-		OCServo2.write(CS2); time.sleep(OCDelay)
-		OCServo1.write(OS1); time.sleep(OCDelay)
-		RServo2.write(RS2) ; time.sleep(RDelay)
-		OCServo1.write(CS1); time.sleep(OCDelay)
-		OCServo2.write(OS2); time.sleep(OCDelay)
-		RServo2.write(ARS2); time.sleep(RDelay) #
-		OCServo2.write(CS2); time.sleep(OCDelay)
-	def B2():
-		#Rotate so that this face is in one of the claws
-		OCServo1.write(OS1); time.sleep(OCDelay)
-		RServo2.write(RS2) ; time.sleep(RDelay)
-		OCServo1.write(CS1); time.sleep(OCDelay)
-		OCServo2.write(OS2); time.sleep(OCDelay)
-		RServo2.write(ARS2); time.sleep(RDelay) #
-		OCServo2.write(CS2); time.sleep(OCDelay)
-		#rotate side prescribed number of times
-		RServo1.write(RS1) ; time.sleep(RDelay) #1
-		OCServo1.write(OS1); time.sleep(OCDelay)
-		RServo1.write(ARS1); time.sleep(RDelay) #
-		OCServo1.write(CS1); time.sleep(OCDelay)
-		RServo1.write(RS1) ; time.sleep(RDelay) #2
-		OCServo1.write(OS1); time.sleep(OCDelay)
-		RServo1.write(ARS1); time.sleep(RDelay) #
-		OCServo1.write(CS1); time.sleep(OCDelay)
-		#Return side to original position
-		OCServo1.write(OS1); time.sleep(OCDelay)
-		RServo2.write(RS2) ; time.sleep(RDelay)
-		OCServo1.write(CS1); time.sleep(OCDelay)
-		OCServo2.write(OS2); time.sleep(OCDelay)
-		RServo2.write(ARS2); time.sleep(RDelay) #
-		OCServo2.write(CS2); time.sleep(OCDelay)
-		OCServo1.write(OS1); time.sleep(OCDelay)
-		RServo2.write(RS2) ; time.sleep(RDelay)
-		OCServo1.write(CS1); time.sleep(OCDelay)
-		OCServo2.write(OS2); time.sleep(OCDelay)
-		RServo2.write(ARS2); time.sleep(RDelay) #
-		OCServo2.write(CS2); time.sleep(OCDelay)
-		OCServo1.write(OS1); time.sleep(OCDelay)
-		RServo2.write(RS2) ; time.sleep(RDelay)
-		OCServo1.write(CS1); time.sleep(OCDelay)
-		OCServo2.write(OS2); time.sleep(OCDelay)
-		RServo2.write(ARS2); time.sleep(RDelay) #
-		OCServo2.write(CS2); time.sleep(OCDelay)
-	def B3():
-		#Rotate so that this face is in one of the claws
-		OCServo1.write(OS1); time.sleep(OCDelay)
-		RServo2.write(RS2) ; time.sleep(RDelay)
-		OCServo1.write(CS1); time.sleep(OCDelay)
-		OCServo2.write(OS2); time.sleep(OCDelay)
-		RServo2.write(ARS2); time.sleep(RDelay) #
-		OCServo2.write(CS2); time.sleep(OCDelay)
-		#rotate side prescribed number of times
-		RServo1.write(RS1) ; time.sleep(RDelay) #1
-		OCServo1.write(OS1); time.sleep(OCDelay)
-		RServo1.write(ARS1); time.sleep(RDelay) #
-		OCServo1.write(CS1); time.sleep(OCDelay)
-		RServo1.write(RS1) ; time.sleep(RDelay) #2
-		OCServo1.write(OS1); time.sleep(OCDelay)
-		RServo1.write(ARS1); time.sleep(RDelay) #
-		OCServo1.write(CS1); time.sleep(OCDelay)
-		RServo1.write(RS1) ; time.sleep(RDelay) #3
-		OCServo1.write(OS1); time.sleep(OCDelay)
-		RServo1.write(ARS1); time.sleep(RDelay) #
-		OCServo1.write(CS1); time.sleep(OCDelay)
-		#Return side to original position
-		OCServo1.write(OS1); time.sleep(OCDelay)
-		RServo2.write(RS2) ; time.sleep(RDelay)
-		OCServo1.write(CS1); time.sleep(OCDelay)
-		OCServo2.write(OS2); time.sleep(OCDelay)
-		RServo2.write(ARS2); time.sleep(RDelay) #
-		OCServo2.write(CS2); time.sleep(OCDelay)
-		OCServo1.write(OS1); time.sleep(OCDelay)
-		RServo2.write(RS2) ; time.sleep(RDelay)
-		OCServo1.write(CS1); time.sleep(OCDelay)
-		OCServo2.write(OS2); time.sleep(OCDelay)
-		RServo2.write(ARS2); time.sleep(RDelay) #
-		OCServo2.write(CS2); time.sleep(OCDelay)
-		OCServo1.write(OS1); time.sleep(OCDelay)
-		RServo2.write(RS2) ; time.sleep(RDelay)
-		OCServo1.write(CS1); time.sleep(OCDelay)
-		OCServo2.write(OS2); time.sleep(OCDelay)
-		RServo2.write(ARS2); time.sleep(RDelay) #
-		OCServo2.write(CS2); time.sleep(OCDelay)
-	def L1():
-		#Rotate so that this face is in one of the claws
-		OCServo2.write(OS2); time.sleep(OCDelay)
-		RServo1.write(RS1) ; time.sleep(RDelay)
-		OCServo2.write(CS2); time.sleep(OCDelay)
-		OCServo1.write(OS1); time.sleep(OCDelay)
-		RServo1.write(ARS1); time.sleep(RDelay) #
-		OCServo1.write(CS1); time.sleep(OCDelay)
-		OCServo2.write(OS2); time.sleep(OCDelay)
-		RServo1.write(RS1) ; time.sleep(RDelay)
-		OCServo2.write(CS2); time.sleep(OCDelay)
-		OCServo1.write(OS1); time.sleep(OCDelay)
-		RServo1.write(ARS1); time.sleep(RDelay) #
-		OCServo1.write(CS1); time.sleep(OCDelay)
-		#close servo
-		#rotate side prescribed number of times
-		RServo1.write(RS1) ; time.sleep(RDelay) #1
-		OCServo1.write(OS1); time.sleep(OCDelay)
-		RServo1.write(ARS1); time.sleep(RDelay) #
-		OCServo1.write(CS1); time.sleep(OCDelay)
-		#Return side to original position
-		OCServo2.write(OS2); time.sleep(OCDelay)
-		RServo1.write(RS1) ; time.sleep(RDelay)
-		OCServo2.write(CS2); time.sleep(OCDelay)
-		OCServo1.write(OS1); time.sleep(OCDelay)
-		RServo1.write(ARS1); time.sleep(RDelay) #
-		OCServo1.write(CS1); time.sleep(OCDelay)
-		OCServo2.write(OS2); time.sleep(OCDelay)
-		RServo1.write(RS1) ; time.sleep(RDelay)
-		OCServo2.write(CS2); time.sleep(OCDelay)
-		OCServo1.write(OS1); time.sleep(OCDelay)
-		RServo1.write(ARS1); time.sleep(RDelay) #
-		OCServo1.write(CS1); time.sleep(OCDelay)
-	def L2():
-		#Rotate so that this face is in one of the claws
-		OCServo2.write(OS2); time.sleep(OCDelay)
-		RServo1.write(RS1) ; time.sleep(RDelay)
-		OCServo2.write(CS2); time.sleep(OCDelay)
-		OCServo1.write(OS1); time.sleep(OCDelay)
-		RServo1.write(ARS1); time.sleep(RDelay) #
-		OCServo1.write(CS1); time.sleep(OCDelay)
-		OCServo2.write(OS2); time.sleep(OCDelay)
-		RServo1.write(RS1) ; time.sleep(RDelay)
-		OCServo2.write(CS2); time.sleep(OCDelay)
-		OCServo1.write(OS1); time.sleep(OCDelay)
-		RServo1.write(ARS1); time.sleep(RDelay) #
-		OCServo1.write(CS1); time.sleep(OCDelay)
-		#close servo
-		#rotate side prescribed number of times
-		RServo1.write(RS1) ; time.sleep(RDelay) #1
-		OCServo1.write(OS1); time.sleep(OCDelay)
-		RServo1.write(ARS1); time.sleep(RDelay) #
-		OCServo1.write(CS1); time.sleep(OCDelay)
-		RServo1.write(RS1) ; time.sleep(RDelay) #2
-		OCServo1.write(OS1); time.sleep(OCDelay)
-		RServo1.write(ARS1); time.sleep(RDelay) #
-		OCServo1.write(CS1); time.sleep(OCDelay)
-		#Return side to original position
-		OCServo2.write(OS2); time.sleep(OCDelay)
-		RServo1.write(RS1)
-		OCServo2.write(CS2); time.sleep(OCDelay)
-		OCServo1.write(OS1); time.sleep(OCDelay)
-		RServo1.write(ARS1); time.sleep(RDelay) #
-		OCServo1.write(CS1); time.sleep(OCDelay)
-		OCServo2.write(OS2); time.sleep(OCDelay)
-		RServo1.write(RS1) ; time.sleep(RDelay)
-		OCServo2.write(CS2); time.sleep(OCDelay)
-		OCServo1.write(OS1); time.sleep(OCDelay)
-		RServo1.write(ARS1); time.sleep(RDelay) #
-		OCServo1.write(CS1); time.sleep(OCDelay)
-	def L3():
-		#Rotate so that this face is in one of the claws
-		OCServo2.write(OS2); time.sleep(OCDelay)
-		RServo1.write(RS1) ; time.sleep(RDelay)
-		OCServo2.write(CS2); time.sleep(OCDelay)
-		OCServo1.write(OS1); time.sleep(OCDelay)
-		RServo1.write(ARS1); time.sleep(RDelay) #
-		OCServo1.write(CS1); time.sleep(OCDelay)
-		OCServo2.write(OS2); time.sleep(OCDelay)
-		RServo1.write(RS1) ; time.sleep(RDelay)
-		OCServo2.write(CS2); time.sleep(OCDelay)
-		OCServo1.write(OS1); time.sleep(OCDelay)
-		RServo1.write(ARS1); time.sleep(RDelay) #
-		OCServo1.write(CS1); time.sleep(OCDelay)
-		#close servo
-		#rotate side prescribed number of times
-		RServo1.write(RS1) ; time.sleep(RDelay) #1
-		OCServo1.write(OS1); time.sleep(OCDelay)
-		RServo1.write(ARS1); time.sleep(RDelay) #
-		OCServo1.write(CS1); time.sleep(OCDelay)
-		RServo1.write(RS1) ; time.sleep(RDelay) #2
-		OCServo1.write(OS1); time.sleep(OCDelay)
-		RServo1.write(ARS1); time.sleep(RDelay) #
-		OCServo1.write(CS1); time.sleep(OCDelay)
-		RServo1.write(RS1) ; time.sleep(RDelay) #3
-		OCServo1.write(OS1); time.sleep(OCDelay)
-		RServo1.write(ARS1); time.sleep(RDelay) #
-		OCServo1.write(CS1); time.sleep(OCDelay)
-		#Return side to original position
-		OCServo2.write(OS2); time.sleep(OCDelay)
-		RServo1.write(RS1) ; time.sleep(RDelay)
-		OCServo2.write(CS2); time.sleep(OCDelay)
-		OCServo1.write(OS1); time.sleep(OCDelay)
-		RServo1.write(ARS1); time.sleep(RDelay) #
-		OCServo1.write(CS1); time.sleep(OCDelay)
-		OCServo2.write(OS2); time.sleep(OCDelay)
-		RServo1.write(RS1) ; time.sleep(RDelay)
-		OCServo2.write(CS2); time.sleep(OCDelay)
-		OCServo1.write(OS1); time.sleep(OCDelay)
-		RServo1.write(ARS1); time.sleep(RDelay) #
-		OCServo1.write(CS1); time.sleep(OCDelay)
-	def D1():
-		#Rotate so that this face is in one of the claws
-		#close servo
-		#rotate side prescribed number of times
-		RServo1.write(RS1) ; time.sleep(RDelay) #1
-		OCServo1.write(OS1); time.sleep(OCDelay)
-		RServo1.write(ARS1); time.sleep(RDelay) #
-		OCServo1.write(CS1); time.sleep(OCDelay)
-		#Return side to original position?
-	def D2():
-		#Rotate so that this face is in one of the claws
-		#close servo
-		#rotate side prescribed number of times
-		RServo1.write(RS1) ; time.sleep(RDelay) #1
-		OCServo1.write(OS1); time.sleep(OCDelay)
-		RServo1.write(ARS1); time.sleep(RDelay) #
-		OCServo1.write(CS1); time.sleep(OCDelay)
-		RServo1.write(RS1) ; time.sleep(RDelay) #2
-		OCServo1.write(OS1); time.sleep(OCDelay)
-		RServo1.write(ARS1); time.sleep(RDelay) #
-		OCServo1.write(CS1); time.sleep(OCDelay)
-		#Return side to original position?
-	def D3():
-		#Rotate so that this face is in one of the claws
-		#close servo
-		#rotate side prescribed number of times
-		RServo1.write(RS1) ; time.sleep(RDelay) #1
-		OCServo1.write(OS1); time.sleep(OCDelay)
-		RServo1.write(ARS1); time.sleep(RDelay) #
-		OCServo1.write(CS1); time.sleep(OCDelay)
-		RServo1.write(RS1) ; time.sleep(RDelay) #2
-		OCServo1.write(OS1); time.sleep(OCDelay)
-		RServo1.write(ARS1); time.sleep(RDelay) #
-		OCServo1.write(CS1); time.sleep(OCDelay)
-		RServo1.write(RS1) ; time.sleep(RDelay) #3
-		OCServo1.write(OS1); time.sleep(OCDelay)
-		RServo1.write(ARS1); time.sleep(RDelay) #
-		OCServo1.write(CS1); time.sleep(OCDelay)
-		#Return side to original position?
 
-
+				
 
 #  Some rules:
 #	* there are 24 possible orientations
@@ -670,100 +220,15 @@ class Robot(object):
 #	                  (0) --+-- (180)
 
 
-def test():
-	print 'U1'
-	U1()	
-	print "U2"
-	U2()
-	print "U3"
-	U3()
-	print "F1"
-	F1()
-	print "F2"
-	F2()
-	print "F3"
-	F3()
-	print "R1"
-	R1()
-	print "R2"
-	R2()
-	print "R3"
-	R3()
-	print "B1"
-	B1()
-	print "B2"
-	B2()
-	print "B3"
-	B3()
-	print "L1"
-	L1()
-	print "L2"
-	L2()
-	print "L3"
-	L3()
-	print "D1"
-	D1()
-	print "D2"
-	D2()
-	print "D3"
-	D3()
 
-def solve(solution):	
-	prev = 0
-	moves = []
-	error_count = 0
-	for i in solution:
-		if i.isdigit():
-			moves.append(str(prev) + str(i))
-		else:
-			prev = i
-	for i in moves:
-		#Identify the move in question
-		#TODO Find less stupid way? (polymorphism)
-		if i == "U1": 
-			U1()		
-		elif i == "U2":
-			U2()
-		elif i == "U3":
-			U3()
-		elif i == "F1":
-			F1()
-		elif i == "F2":
-			F2()
-		elif i == "F3":
-			F3()
-		elif i == "R1":
-			R1()
-		elif i == "R2":
-			R2()
-		elif i == "R3":
-			R3()
-		elif i == "B1":
-			B1()
-		elif i == "B2":
-			B2()
-		elif i == "B3":
-			B3()
-		elif i == "L1":
-			L1()
-		elif i == "L2":
-			L2()
-		elif i == "L3":
-			L3()
-		elif i == "D1":
-			D1()
-		elif i == "D2":
-			D2()
-		elif i == "D3":
-			D3()
-		else: 
-			print "Error:", i, "is not a valid move."		
-			error_count += 1		
-	return error_count
+
 								
-def main():			
-	while True:
-		test()
+def main():	
+	pins = [12,11,10,9]
+	positions = [0, 90, 180, 70, 10,
+				 0, 90, 180, 95, 45]
+	robot = arduino.Robot('/dev/ttyACM0', pins, positions)		
+	robot.test()
 	return 0
 
 if __name__ == '__main__':
@@ -777,5 +242,5 @@ if __name__ == '__main__':
 # please increment the following counter as a warning
 # to the next guy:
 # 
-# total_hours_wasted_here = 6
+# total_hours_wasted_here = 12
 # 
