@@ -3,8 +3,7 @@
 #
 #  cube.py
 #  
-#  Copyright 2015 Jakob Coray <jakob2016@gmail.com> and 
-#                 Gabriel Norris <gabriel@Thoth>
+#  Copyright 2015 Jakob Coray <jakob2016@gmail.com> and Gabriel Norris
 #  
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -23,7 +22,7 @@
 #  
 
 import subprocess
-import gui_1 as gui #  Input the cube
+import gui
 import arduino
 
 class Cube(object):
@@ -86,11 +85,10 @@ class Cube(object):
                 | 46 | 47 | 48 |
                 +----+----+----+"""
 
-
 def main():
 	pins = [12,11,10,9]
 	positions = [0, 90, 180, 70, 10,
-				 0, 90, 180, 95, 45]
+		     0, 90, 180, 95, 45]
 	robot = arduino.Robot('/dev/ttyACM0', pins, positions)
 	#gui.enter_cube()
 	#input_facets = gui.to_facets()
