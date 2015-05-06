@@ -1,7 +1,7 @@
 /*
   Jaap Scherphuis,  24/01/2004,  jaapsch_at_yahoo_do_com
 
-  Thistlethwaite's algorithm.
+  This is and implementation of Thistlethwaite's algorithm.
 */
 
 #include <iostream>
