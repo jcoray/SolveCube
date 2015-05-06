@@ -1,7 +1,7 @@
 # SolveCube
 A fast Raspberry Pi and Arduino based Rubik's Cube solving robot.
 
-Created by Jakob Coray and Gabriel Norris.
+Created by Gabriel Norris and Jakob Coray, with advisement from Clint Gibson
 #### Software
 - arduino.py - Controls the robotics
 - cubecompo.cpp - Solves the cube
@@ -11,7 +11,7 @@ Created by Jakob Coray and Gabriel Norris.
 #### Hardware
 - Arduino Uno R3
 - Raspberry Pi 2 Model B
-- Standerd Servos (4)
+- Standard Servos (4)
 - 3 Amp power supply 
 - Claws (2) Designed by Kas of the Arduino forums <http://forum.arduino.cc/index.php?topic=271827.0>
 
