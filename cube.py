@@ -38,7 +38,7 @@ class Cube(object):
 					  'BR',  'BL',  'UFR', 'URB', 'UBL', 
 					  'ULF', 'DRF', 'DFL', 'DLB', 'DBR')
 	
-	def __init__(self, facets = None, cubies = None):
+	def __init__(self, facets=None, cubies=None):
 		if facets is None:
 			facets = {x:'#' for x in range(1,49)} #  Create dict to hold facets
 		self.facets = facets
