@@ -3,7 +3,11 @@
 #
 #  Solution.py
 #  
+<<<<<<< HEAD
 #  Copyright 2015 Gabriel Norris <
+=======
+#  Copyright 2015 Gabriel Norris  <>
+>>>>>>> 0cf5fd808f484f6a0763b55ed556a1b3474a467c
 #                 Jakob Coray <jakob2016@gmail.com>
 #  
 #  This program is free software; you can redistribute it and/or modify
