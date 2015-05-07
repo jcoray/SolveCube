@@ -84,17 +84,6 @@ class Robot(object):
 		print "Configured."
 		
 		self.cube = Cube()
-
-		OS1 = 70 #  Degrees
-		CS1 = 40 # max 10 Degrees
-		OS2 = 95 #  Degrees
-		CS2 = 65 # max 10 Degrees
-		RS1 = 0 #  Degrees
-		ARS1 = 180 #  Degrees
-		RS2 = 0 #  Degrees
-		ARS2 = 180 #  Degrees
-		OCDelay = .25 #  Seconds
-		RDelay = .5 #  Seconds
 		
 	def rotate_90(face):
 		buffer_orient = {'D':'D', 'F':'F', 'R':'R', 'B':'B', 'L':'L', 'U':'U',}
@@ -125,11 +114,38 @@ class Robot(object):
 			self.claw_right.home_turn()
 			self.claw_right.close_hand()
 		elif face_orient is 'B':
-			pass
+			self.claw_down.open_hand()
+			self.claw_right.quarter_turn()
+			self.claw_down.close_hand()
+			self.claw_right.open_hand()
+			self.claw_right.home_turn()
+			self.claw_right.close_hand()
+			self.claw_down.quarter_turn()
+			self.claw_down.open_hand()
+			self.claw_down.home_turn()
+			self.claw_down.close_hand()
 		elif face_orient is 'L':
-			pass
+			self.claw_right.open_hand()
+			self.claw_down.half_turn()
+			self.claw_right.close_hand()
+			self.claw_down.open_hand()
+			self.claw_down.home_turn()
+			self.claw_down.close_hand()
+			self.claw_right.quarter_turn()
+			self.claw_right.open_hand()
+			self.claw_right.home_turn()
+			self.claw_right.close_hand()
 		elif face_orient is 'U':
-			pass
+			self.claw_down.open_hand()
+			self.claw_right.half_turn()
+			self.claw_down.close_hand()
+			self.claw_right.open_hand()
+			self.claw_right.home_turn()
+			self.claw_right.close_hand()
+			self.claw_down.quarter_turn()
+			self.claw_down.open_hand()
+			self.claw_down.home_turn()
+			self.claw_down.close_hand()
 		#  Update the orientation. TODO this is not updated for the dict
 		for ii_orient, ii_face in enumerate(buffer_orient):
 			self.cube.orient[ii_orient] = ii_face
