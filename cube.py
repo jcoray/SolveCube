@@ -3,8 +3,7 @@
 #
 #  cube.py
 #  
-#  Copyright 2015 Jakob Coray <jakob2016@gmail.com> and 
-#                 Gabriel Norris <gabriel@Thoth>
+#  Copyright 2015 Jakob Coray <jakob2016@gmail.com> and Gabriel Norris
 #  
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -23,7 +22,7 @@
 #  
 
 import subprocess
-import gui_1 as gui #  Input the cube
+import gui
 import arduino
 
 class Cube(object):
@@ -38,7 +37,7 @@ class Cube(object):
 					  'BR',  'BL',  'UFR', 'URB', 'UBL', 
 					  'ULF', 'DRF', 'DFL', 'DLB', 'DBR')
 	
-	def __init__(self, facets = None, cubies = None):
+	def __init__(self, facets=None, cubies=None):
 		if facets is None:
 			facets = {x:'#' for x in range(1,49)} #  Create dict to hold facets
 		self.facets = facets
@@ -86,10 +85,13 @@ class Cube(object):
                 | 46 | 47 | 48 |
                 +----+----+----+"""
 
-
 def main():
-	gui.enter_cube()
-	input_facets = gui.to_facets()
+	pins = [12,11,10,9]
+	positions = [0, 90, 180, 70, 10,
+		     0, 90, 180, 95, 45]
+	robot = arduino.Robot('/dev/ttyACM0', pins, positions)
+	#gui.enter_cube()
+	#input_facets = gui.to_facets()
 	rubik = Cube(input_facets)
 	print rubik.set_cubies()
 	rubik.print_cubies()

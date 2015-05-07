@@ -1,11 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-#  Arduino.py
+#  arduino.py
 #  
-#  Copyright 2015 Gabriel Norris <gabe.norris@ymail.com>
-#                 Jakob Coray <jakob2016@gmail.com>
-#  
+#  Copyright 2015 Gabriel Norris <gabe.norris@ymail.com> Jakob Coray <jakob2016@gmail.com>
+#                 
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
 #  the Free Software Foundation; either version 2 of the License, or
@@ -109,12 +108,6 @@ class Robot(object):
 			self.claw_down.open_hand()
 			self.claw_down.home_turn()
 			self.claw_down.close_hand()
-			buffer_orient['D'] = self.cube.orient['D'] #  The face in the claw does not move
-			buffer_orient['F'] = self.cube.orient['L'] #  L -> F
-			buffer_orient['R'] = self.cube.orient['F'] #  F -> R | TODO Brainstorm this part more
-			buffer_orient['B'] = self.cube.orient['R'] #  R -> B | For the Down face, none of this should be changing
-			buffer_orient['L'] = self.cube.orient['B'] #  B -> L | Unless I'm misunderstanding
-			buffer_orient['U'] = self.cube.orient['U'] #  Top does not move
 		elif face_orient is 'F': 
 			self.claw_right.open_hand()
 			self.claw_down.quarter_turn()
@@ -246,4 +239,4 @@ if __name__ == '__main__':
 # please increment the following counter as a warning
 # to the next guy:
 # 
-# total_hours_wasted_here = 14 
+# total_hours_wasted_here = 16

@@ -11,7 +11,6 @@
 
 
 from Tkinter import *
-import time #  TODO is this used?
 import sys
 
 yellow_face = ['y', 'y', 'y',
