@@ -130,6 +130,12 @@ class Robot(object):
 			self.claw_down.open_hand()
 			self.claw_down.home_turn()
 			self.claw_down.close_hand()
+			buffer_orient['D'] = self.cube.orient['B'] 
+			buffer_orient['F'] = self.cube.orient['D']
+			buffer_orient['R'] = self.cube.orient['R'] #  The face in the claw does not move
+			buffer_orient['B'] = self.cube.orient['U'] 
+			buffer_orient['L'] = self.cube.orient['L'] 
+ 			buffer_orient['U'] = self.cube.orient['F'] 
 		elif face_orient is 'L':
 			self.claw_right.open_hand()
 			self.claw_down.half_turn()
