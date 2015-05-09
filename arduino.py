@@ -147,6 +147,12 @@ class Robot(object):
 			self.claw_right.open_hand()
 			self.claw_right.home_turn()
 			self.claw_right.close_hand()
+			buffer_orient['D'] = self.cube.orient['D'] #  The face in the claw does not move
+			buffer_orient['F'] = self.cube.orient['B'] #  L -> F
+			buffer_orient['R'] = self.cube.orient['L'] #  F -> R
+			buffer_orient['B'] = self.cube.orient['F'] #  R -> B
+			buffer_orient['L'] = self.cube.orient['R'] #  B -> L
+ 			buffer_orient['U'] = self.cube.orient['U']
 		elif face_orient is 'U':
 			self.claw_down.open_hand()
 			self.claw_right.half_turn()
@@ -158,6 +164,12 @@ class Robot(object):
 			self.claw_down.open_hand()
 			self.claw_down.home_turn()
 			self.claw_down.close_hand()
+			buffer_orient['D'] = self.cube.orient['U'] #  The face in the claw does not move
+			buffer_orient['F'] = self.cube.orient['B'] #  L -> F
+			buffer_orient['R'] = self.cube.orient['R'] #  F -> R
+			buffer_orient['B'] = self.cube.orient['F'] #  R -> B
+			buffer_orient['L'] = self.cube.orient['L'] #  B -> L
+ 			buffer_orient['U'] = self.cube.orient['D']
 		#  Update the orientation. TODO this is not updated for the dict
 		for ii_orient, ii_face in enumerate(buffer_orient):
 			self.cube.orient[ii_orient] = ii_face
@@ -165,7 +177,7 @@ class Robot(object):
 		
 	def rotate_180(face): 
 		buffer_orient = []
-		face_orient
+		face_orient = self.cube.orient
 		for orient, iiface in enumerate(self.cube.orient):
 			if face = iiface:
 				face_orient = orient
