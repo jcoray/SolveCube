@@ -24,6 +24,6 @@ Created by Gabriel Norris and Jakob Coray, with advisement from Clint Gibson
 1. Download repository
 2. Compile cubecompo.cpp: ```g++ cubecompo.cpp -o cubecompo```
 3. Install Tkinter ```sudo apt-get install python-tk```
-4. Install pip ``sudo apt-get install python-pip```
+4. Install pip ```sudo apt-get install python-pip```
 5. Install Pyfirmata ```sudo pip install pyfirmata```
 6. Run cube.py: ```./cube.py```
