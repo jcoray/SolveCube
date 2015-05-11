@@ -49,7 +49,6 @@ class Claw(object):
 		self.quarter_turn_delay = quarter_turn_delay
 		self.half_turn_delay = quarter_turn_delay * 2
 		self.hand_delay = hand_delay
-		
 	def home_turn(self):
 		self.wrist.write(self.home_turn_deg)
 		time.sleep(self.quarter_turn_delay)
@@ -61,36 +60,36 @@ class Claw(object):
 		time.sleep(self.half_turn_delay)
 
 	def open_hand(self):
-		self.hand.write(self.open_deg)
+		self.hand.write(self.open_hand_deg)
 		time.sleep(self.hand_delay)
 	def close_hand(self):
-		self.hand.write(self.close_deg)
+		self.hand.write(self.close_hand_deg)
 		time.sleep(self.hand_delay)
 		
 		
 class Robot(object):
 	def __init__(self, serial_port, pins, positions, hand_delay=.25, quarter_turn_delay=.5):
-		sys.stdout.write("Connecting to Arduino...") #  Print w/o \n
+		sys.stdout.write("Connecting to Arduino... ") #  Print w/o \n
 		#  On Linux machines the serial port will be similar 
 		#  to '/dev/ttyACM'. Open up a terminal window and type:
 		#      $_  ls /dev | grep ttyACM 
 		#  to list devices. One of these should be your Arduino.
 		arduino = Arduino(serial_port)
-		print "Connected."
+		print "Done."
 		print "Configuring Arduino..."
 		iterator = util.Iterator(arduino)
 		iterator.start()
 		sys.stdout.write("    Configuring down_claw... ") #  Print w/o \n
-		self.claw_down = Claw(arduino, pins[0], pins[1], positions[0:4], delay_hand, quarter_turn_delay)
+		self.claw_down = Claw(arduino, pins[0], pins[1], positions[0:5], hand_delay, quarter_turn_delay)
 		print "Done."
 		sys.stdout.write("    Configuring up_claw... ") #  Print w/o \n
-		self.claw_right = Claw(arduino, pins[2], pins[3], positions[5:9], delay_hand, quarter_turn_delay)
+		self.claw_right = Claw(arduino, pins[2], pins[3], positions[5:10], hand_delay, quarter_turn_delay)
 		print "Done."
 		print "Configured."
 		
 		self.cube = Cube()
 		
-	def rotate_90(face):
+	def rotate_90(self, face):
 		buffer_orient = {'D':'D', 'F':'F', 'R':'R', 'B':'B', 'L':'L', 'U':'U',}
 		face_orient = ''
 		for orient in self.cube.orient:
@@ -182,7 +181,7 @@ class Robot(object):
 		self.cube.orient = buffer_orient #  Update the orientation.
 		return self.cube.orient 
 		
-	def rotate_180(face): 
+	def rotate_180(self, face): 
 		buffer_orient = {'D':'D', 'F':'F', 'R':'R', 'B':'B', 'L':'L', 'U':'U',}
 		face_orient = ''
 		for orient in self.cube.orient:
@@ -291,6 +290,7 @@ class Robot(object):
 				print self.rotate_180(face)
 				print self.rotate_90(face)
 		print "SOLVED!"
+		return 0
 	
 	def test(self):
 		test_solution = "U1U3 D1D3 R1R3 L1L3 F1F3"
@@ -301,9 +301,9 @@ def main():
 	pins = [12,11,10,9]
 	positions = [0, 90, 180, 70, 10,
 				 0, 90, 180, 95, 45]
-	robot = arduino.Robot('/dev/ttyACM0', pins, positions)		
+	robot = Robot('/dev/ttyACM0', pins, positions)		
 	robot.test()
-	return 0
+	return 0 #  TODO it does not exit (niether sys.exit(0) nor exit(0) work)
 
 if __name__ == '__main__':
 	main()

@@ -88,17 +88,17 @@ class Cube(object):
 def main():
 	pins = [12,11,10,9]
 	positions = [0, 90, 180, 70, 10,
-		     0, 90, 180, 95, 45]
+				 0, 90, 180, 95, 45]
 	robot = arduino.Robot('/dev/ttyACM0', pins, positions)
-	#gui.enter_cube()
-	#input_facets = gui.to_facets()
+	gui.enter_cube()
+	input_facets = gui.to_facets()
 	rubik = Cube(input_facets)
-	print rubik.set_cubies()
+	rubik.set_cubies()
 	rubik.print_cubies()
 	#  The solver agorithom is written in c++
 	solution = subprocess.check_output("./cubecompo " + rubik.cubies_arg(), shell=True)
 	print "Solution:", solution
-	arduino.solve(solution)
+	robot.solve(solution)
 	return 0
 
 if __name__ == '__main__':
