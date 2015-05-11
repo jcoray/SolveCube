@@ -92,11 +92,11 @@ class Robot(object):
 		
 	def rotate_90(face):
 		buffer_orient = {'D':'D', 'F':'F', 'R':'R', 'B':'B', 'L':'L', 'U':'U',}
-		face_orient = self.cube.orient 
-		#  Find ...
+		face_orient = ''
 		for orient in self.cube.orient:
 			if face is self.cube.orient[orient]:
 				face_orient = self.cube.orient[orient]
+				break
 		if face_orient is 'D': 
 			self.claw_down.quarter_turn()
 			self.claw_down.open_hand()
@@ -179,18 +179,16 @@ class Robot(object):
 			buffer_orient['B'] = self.cube.orient['F'] #  R -> B
 			buffer_orient['L'] = self.cube.orient['L'] #  B -> L
  			buffer_orient['U'] = self.cube.orient['D']
-		#  Update the orientation. TODO this is not updated for the dict
-		for ii_orient, ii_face in enumerate(buffer_orient):
-			self.cube.orient[ii_orient] = ii_face
-		return self.cube.orient
+		self.cube.orient = buffer_orient #  Update the orientation.
+		return self.cube.orient 
 		
 	def rotate_180(face): 
-		buffer_orient = []
-		face_orient = self.cube.orient
-		for orient, iiface in enumerate(self.cube.orient):
-			if face = iiface:
-				face_orient = orient
-		
+		buffer_orient = {'D':'D', 'F':'F', 'R':'R', 'B':'B', 'L':'L', 'U':'U',}
+		face_orient = ''
+		for orient in self.cube.orient:
+			if face is self.cube.orient[orient]:
+				face_orient = self.cube.orient[orient]
+				break
 		if face_orient is 'D': #  Face held in claw_down
 			self.claw_down.half_turn()
 			self.claw_down.open_hand()
@@ -218,7 +216,7 @@ class Robot(object):
 			self.claw_right.open_hand()
 			self.claw_right.home_turn()
 			self.claw_right.close_hand()
-	elif face_orient is 'B':
+		elif face_orient is 'B':
 			self.claw_down.open_hand()
 			self.claw_right.quarter_turn()
 			self.claw_down.close_hand()
@@ -269,10 +267,8 @@ class Robot(object):
 			buffer_orient['B'] = self.cube.orient['F'] #  R -> B
 			buffer_orient['L'] = self.cube.orient['L'] #  B -> L
  			buffer_orient['U'] = self.cube.orient['D']
-		#  Update the orientation. TODO this is not updated for the dict
-		for ii_orient, ii_face in enumerate(buffer_orient):
-			self.cube.orient[ii_orient] = ii_face
-		return self.cube.orient
+		self.cube.orient = buffer_orient #  Update the orientation.
+		return self.cube.orient 
 
 	def solve(self, solution):
 		prev = 0
@@ -288,12 +284,12 @@ class Robot(object):
 			rotations = step[0]
 			face = step[1]
 			if rotations is 1:
-				self.rotate_90(face)
+				print self.rotate_90(face)
 			elif rotations is 2:
-				self.rotate_180(face)
+				print self.rotate_180(face)
 			elif rotations is 3:
-				self.rotate_180(face)
-				self.rotate_90(face)
+				print self.rotate_180(face)
+				print self.rotate_90(face)
 		print "SOLVED!"
 	
 	def test(self):
