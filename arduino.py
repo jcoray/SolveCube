@@ -19,6 +19,11 @@
 # "We cannot solve our problems with the same thinking that we used
 #  when we created them."
 #                           -Albert Einstein
+#
+#	The claws are mounted like this: | (0) (home position)
+#	                          (90) --+
+#	                                 | (180)
+	
 
 from pyfirmata import Arduino, util
 #  https://media.readthedocs.org/pdf/pyfirmata/latest/pyfirmata.pdf
@@ -92,11 +97,13 @@ class Robot(object):
 		for orient in self.cube.orient:
 			if face is self.cube.orient[orient]:
 				face_orient = self.cube.orient[orient]
-		if face_orient is 'D': #  Face held in claw_down
+		if face_orient is 'D': 
 			self.claw_down.quarter_turn()
 			self.claw_down.open_hand()
 			self.claw_down.home_turn()
 			self.claw_down.close_hand()
+			#  Because the face is already in claw_down, the robot
+			#  does not need rotate the cube to turn the face. 
 		elif face_orient is 'F': 
 			self.claw_right.open_hand()
 			self.claw_down.quarter_turn()
@@ -109,16 +116,18 @@ class Robot(object):
 			self.claw_right.home_turn()
 			self.claw_right.close_hand()
 			buffer_orient['D'] = self.cube.orient['D'] #  The face in the claw does not move
-			buffer_orient['F'] = self.cube.orient['L'] #  L -> F
-			buffer_orient['R'] = self.cube.orient['F'] #  F -> R
-			buffer_orient['B'] = self.cube.orient['R'] #  R -> B
-			buffer_orient['L'] = self.cube.orient['B'] #  B -> L
- 			buffer_orient['U'] = self.cube.orient['U'] #  Top does not move
-		elif face_orient is 'R': #  Face held in claw_right
+			buffer_orient['F'] = self.cube.orient['L']
+			buffer_orient['R'] = self.cube.orient['F'] 
+			buffer_orient['B'] = self.cube.orient['R']
+			buffer_orient['L'] = self.cube.orient['B'] 
+ 			buffer_orient['U'] = self.cube.orient['U'] 
+		elif face_orient is 'R':
 			self.claw_right.quarter_turn()
 			self.claw_right.open_hand()
 			self.claw_right.home_turn()
 			self.claw_right.close_hand()
+			#  Because the face is already in claw_right, the robot
+			#  does not need rotate the cube to turn the face. 
 		elif face_orient is 'B':
 			self.claw_down.open_hand()
 			self.claw_right.quarter_turn()
@@ -148,10 +157,10 @@ class Robot(object):
 			self.claw_right.home_turn()
 			self.claw_right.close_hand()
 			buffer_orient['D'] = self.cube.orient['D'] #  The face in the claw does not move
-			buffer_orient['F'] = self.cube.orient['B'] #  L -> F
-			buffer_orient['R'] = self.cube.orient['L'] #  F -> R
-			buffer_orient['B'] = self.cube.orient['F'] #  R -> B
-			buffer_orient['L'] = self.cube.orient['R'] #  B -> L
+			buffer_orient['F'] = self.cube.orient['B'] 
+			buffer_orient['R'] = self.cube.orient['L'] 
+			buffer_orient['B'] = self.cube.orient['F'] 
+			buffer_orient['L'] = self.cube.orient['R']
  			buffer_orient['U'] = self.cube.orient['U']
 		elif face_orient is 'U':
 			self.claw_down.open_hand()
@@ -182,32 +191,85 @@ class Robot(object):
 			if face = iiface:
 				face_orient = orient
 		
-		if face_orient is 0: #  Face held in claw_down
+		if face_orient is 'D': #  Face held in claw_down
 			self.claw_down.half_turn()
 			self.claw_down.open_hand()
 			self.claw_down.home_turn()
 			self.claw_down.close_hand()
-			buffer_orient[0] = self.cube.orient[0] #  The face in the claw does not move
-			buffer_orient[1] = self.cube.orient[4] #  L -> F
-			buffer_orient[2] = self.cube.orient[1] #  F -> R
-			buffer_orient[3] = self.cube.orient[2] #  R -> B
-			buffer_orient[4] = self.cube.orient[3] #  B -> L
-			buffer_orient[5] = self.cube.orient[5] #  Top does not move
-		elif face_orient is 1: 
-			pass
-		elif face_orient is 2: #  Face held in claw_down
+		elif face_orient is 'F': 
+			self.claw_right.open_hand()
+			self.claw_down.quarter_turn()
+			self.claw_right.close_hand()
+			self.claw_down.open_hand()
+			self.claw_down.home_turn()
+			self.claw_down.close_hand()
 			self.claw_right.half_turn()
 			self.claw_right.open_hand()
 			self.claw_right.home_turn()
 			self.claw_right.close_hand()
-		elif face_orient is 3:
-			pass
-		elif face_orient is 4:
-			pass
-		elif face_orient is 5:
-			pass
-		
-		#  Update the orientation. 
+			buffer_orient['D'] = self.cube.orient['D'] #  The face in the claw does not move
+			buffer_orient['F'] = self.cube.orient['L']
+			buffer_orient['R'] = self.cube.orient['F'] 
+			buffer_orient['B'] = self.cube.orient['R']
+			buffer_orient['L'] = self.cube.orient['B'] 
+ 			buffer_orient['U'] = self.cube.orient['U'] 
+		elif face_orient is 'R': #  Face held in claw_right
+			self.claw_right.half_turn()
+			self.claw_right.open_hand()
+			self.claw_right.home_turn()
+			self.claw_right.close_hand()
+	elif face_orient is 'B':
+			self.claw_down.open_hand()
+			self.claw_right.quarter_turn()
+			self.claw_down.close_hand()
+			self.claw_right.open_hand()
+			self.claw_right.home_turn()
+			self.claw_right.close_hand()
+			self.claw_down.half_turn()
+			self.claw_down.open_hand()
+			self.claw_down.home_turn()
+			self.claw_down.close_hand()
+			buffer_orient['D'] = self.cube.orient['B'] 
+			buffer_orient['F'] = self.cube.orient['D']
+			buffer_orient['R'] = self.cube.orient['R'] #  The face in the claw does not move
+			buffer_orient['B'] = self.cube.orient['U'] 
+			buffer_orient['L'] = self.cube.orient['L'] 
+ 			buffer_orient['U'] = self.cube.orient['F'] 
+		elif face_orient is 'L':
+			self.claw_right.open_hand()
+			self.claw_down.half_turn()
+			self.claw_right.close_hand()
+			self.claw_down.open_hand()
+			self.claw_down.home_turn()
+			self.claw_down.close_hand()
+			self.claw_right.half_turn()
+			self.claw_right.open_hand()
+			self.claw_right.home_turn()
+			self.claw_right.close_hand()
+			buffer_orient['D'] = self.cube.orient['D'] #  The face in the claw does not move
+			buffer_orient['F'] = self.cube.orient['B'] 
+			buffer_orient['R'] = self.cube.orient['L'] 
+			buffer_orient['B'] = self.cube.orient['F'] 
+			buffer_orient['L'] = self.cube.orient['R']
+ 			buffer_orient['U'] = self.cube.orient['U']
+		elif face_orient is 'U':
+			self.claw_down.open_hand()
+			self.claw_right.half_turn()
+			self.claw_down.close_hand()
+			self.claw_right.open_hand()
+			self.claw_right.home_turn()
+			self.claw_right.close_hand()
+			self.claw_down.half_turn()
+			self.claw_down.open_hand()
+			self.claw_down.home_turn()
+			self.claw_down.close_hand()
+			buffer_orient['D'] = self.cube.orient['U'] #  The face in the claw does not move
+			buffer_orient['F'] = self.cube.orient['B'] #  L -> F
+			buffer_orient['R'] = self.cube.orient['R'] #  F -> R
+			buffer_orient['B'] = self.cube.orient['F'] #  R -> B
+			buffer_orient['L'] = self.cube.orient['L'] #  B -> L
+ 			buffer_orient['U'] = self.cube.orient['D']
+		#  Update the orientation. TODO this is not updated for the dict
 		for ii_orient, ii_face in enumerate(buffer_orient):
 			self.cube.orient[ii_orient] = ii_face
 		return self.cube.orient
@@ -238,28 +300,7 @@ class Robot(object):
 		test_solution = "U1U3 D1D3 R1R3 L1L3 F1F3"
 		print "Testing robot. Test pattern:", test_solution
 		self.solve(test_solution)
-		
 
-				
-
-#  Some rules:
-#	* there are 24 possible orientations
-#	* After every move the claw needs to go to the home position
-#		* This could be optimized to be one function
-#	* A rotation is always counter clockwise to that face
-#	* We should do an analyis; I am willing to bet that, for example, R
-#	and R' moves may together be more common than R3, so the motors maybe
-#	should be mounted like this: | (0) (home position)
-#	                      (90) --+
-#	                             | (180)
-#
-#	rather than like this:  | (90) (home position)
-#	                  (0) --+-- (180)
-
-
-
-
-								
 def main():	
 	pins = [12,11,10,9]
 	positions = [0, 90, 180, 70, 10,
@@ -279,4 +320,4 @@ if __name__ == '__main__':
 # please increment the following counter as a warning
 # to the next guy:
 # 
-# total_hours_wasted_here = 16
+# total_hours_wasted_here = 18
