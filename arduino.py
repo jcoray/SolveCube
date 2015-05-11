@@ -89,6 +89,11 @@ class Robot(object):
 		
 		self.cube = Cube()
 		
+		self.claw_down.home_turn()
+		self.claw_down.close_hand()
+		self.claw_right.home_turn()
+		self.claw_right.close_hand()
+		
 	def rotate_90(self, face):
 		buffer_orient = {'D':'D', 'F':'F', 'R':'R', 'B':'B', 'L':'L', 'U':'U',}
 		face_orient = ''
@@ -299,8 +304,8 @@ class Robot(object):
 
 def main():	
 	pins = [12,11,10,9]
-	positions = [0, 90, 180, 70, 10,
-				 0, 90, 180, 95, 45]
+	positions = [180, 96, 10, 70, 10,
+				 180, 100, 25, 95, 45]
 	robot = Robot('/dev/ttyACM0', pins, positions)		
 	robot.test()
 	return 0 #  TODO it does not exit (niether sys.exit(0) nor exit(0) work)
