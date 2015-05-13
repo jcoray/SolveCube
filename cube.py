@@ -89,7 +89,8 @@ def main():
 	pins = [12,11,10,9]
 	positions = [180, 96, 10, 70, 10,
 				 180, 100, 25, 95, 45]
-	robot = arduino.Robot('/dev/ttyACM2', pins, positions, .75, 1.75)
+	robot = arduino.Robot('/dev/ttyACM5', pins, positions, .4, .8) # .2, .4
+
 	gui.enter_cube()
 	input_facets = gui.to_facets()
 	rubik = Cube(input_facets)
@@ -97,7 +98,7 @@ def main():
 	rubik.print_cubies()
 	#  The solver agorithom is written in c++
 	solution = subprocess.check_output("./cubecompo " + rubik.cubies_arg(), shell=True)
-	#solution = subprocess.check_output("./cubecompo " + "RF UR UB LB LF FU BD UL DL FD BR DR FDR URB BRD UFR UBL ULF DFL DLB", shell=True)
+	#solution = subprocess.check_output("./cubecompo " + "UR BL DB RB FL UB DL UF DF RF RD LU DFL BLU FDR LBD BUR UFR LFU RDB", shell=True)
 	print "Solution:", solution
 	robot.solve(solution)
 	return 0
