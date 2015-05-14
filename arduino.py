@@ -3,7 +3,7 @@
 #
 #  arduino.py
 #  
-#  Copyright 2015 Gabriel Norris <gabe.norris@ymail.com> Jakob Coray <jakob2016@gmail.com>
+#  Copyright 2015 Jakob Coray <jakob2016@gmail.com> and Gabriel Norris <gabe.norris@ymail.com> 
 #                 
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ import time
 class Claw(object):
 	def __init__(self, arduino, wrist_pin, hand_pin, positions, hand_delay, quarter_turn_delay):
 		#  Configure Arduino
-		arduino.servo_config(wrist_pin, 1000, 2000, 90) #  (pin, min micro, max micro, center deg)
+		arduino.servo_config(wrist_pin, 1000, 2000, 90) #  pin, min micro, max micro, center deg
 		arduino.servo_config(hand_pin, 1000, 2000, 90)
 		self.wrist = arduino.digital[wrist_pin]
 		self.hand = arduino.digital[hand_pin]
@@ -47,7 +47,7 @@ class Claw(object):
 		self.quarter_turn_delay = quarter_turn_delay
 		self.half_turn_delay = quarter_turn_delay * 2
 		self.hand_delay = hand_delay
-		##  Current Orientation 
+		#  TODO add Current Orientation 
 	def home_turn(self):
 		self.wrist.write(self.home_turn_deg)
 		#  TODO the home turn could either be a half or quarter turn 
@@ -69,12 +69,9 @@ class Claw(object):
 		time.sleep(self.hand_delay)
 		
 class Robot(object):
-	def __init__(self, serial_port, pins, positions, hand_delay=.25, quarter_turn_delay=.5):
+	def __init__(self, serial_port, pins, positions, hand_delay=.2, quarter_turn_delay=.4):
+		"""A robotic cube manipulator. Delays are in seconds."""
 		sys.stdout.write("Connecting to Arduino... ") #  Print w/o \n
-		#  On Linux machines the serial port will be similar 
-		#  to '/dev/ttyACM'. Open up a terminal window and type:
-		#      $_  ls /dev | grep ttyACM 
-		#  to list devices. One of these should be your Arduino.
 		arduino = Arduino(serial_port)
 		print "Done."
 		print "Configuring Arduino..."
@@ -104,8 +101,8 @@ class Robot(object):
 		
 	def rotate_90(self, face): 
 		face_orient = self.find_orient(face)
-		print "\n90* turn of", face, "Face orientation", face_orient #  TODO remove after debug
-		buffer_orient = self.orient
+		print "Turning", face, "90 degrees. It is currently pointing", face_orient
+		buffer_orient = dict(self.orient) #  Create a copy (buffer_orient = self.orient would just create a alias)
 		if face_orient is 'D': 
 			self.claw_down.quarter_turn()
 			self.claw_down.open_hand()
@@ -124,35 +121,12 @@ class Robot(object):
 			self.claw_right.open_hand()
 			self.claw_right.home_turn()
 			self.claw_right.close_hand()
-			print
-			print 'Front 90* turn'
-			print 'init buffer_orient', buffer_orient
-			print 'init self.orient  ', self.orient
-			side_d = self.orient['D']
-			print side_d
-			buffer_orient['D'] = side_d#  The face in the claw does not move
-			print "buffer_orient['D'] = self.orient['D']  buffer:", buffer_orient
-			print "                                  self.orient:", self.orient
-			side_f = self.orient['L']
-			print side_f
-			print "before switch self.orient", self.orient
-			buffer_orient['F'] = side_f
-			print "buffer_orient['F'] = self.orient['L']  buffer:", buffer_orient
-			print "                                  self.orient:", self.orient
-			buffer_orient['R'] = self.orient.get('F')
-			print "buffer_orient['R'] = self.orient['F']  buffer:", buffer_orient
-			print "                                  self.orient:", self.orient
-			buffer_orient['B'] = self.orient.get('R')
-			print "buffer_orient['B'] = self.orient['R']  buffer:", buffer_orient
-			print "                                  self.orient:", self.orient
-			buffer_orient['L'] = self.orient.get('B')
-			print "buffer_orient['L'] = self.orient['B']  buffer:", buffer_orient
-			print "                                  self.orient:", self.orient
- 			buffer_orient['U'] = self.orient.get('U')
- 			print "buffer_orient['U'] = self.orient['U']  buffer:", buffer_orient
- 			print "                                  self.orient:", self.orient
- 			print 'Done turning F face.'
- 			print
+			buffer_orient['D'] = self.orient['D'] #  The face in the claw does not move
+			buffer_orient['F'] = self.orient['L']
+			buffer_orient['R'] = self.orient['F'] 
+			buffer_orient['B'] = self.orient['R']
+			buffer_orient['L'] = self.orient['B'] 
+ 			buffer_orient['U'] = self.orient['U'] 
 		elif face_orient is 'R':
 			self.claw_right.quarter_turn()
 			self.claw_right.open_hand()
@@ -216,8 +190,8 @@ class Robot(object):
 		
 	def rotate_180(self, face): 
 		face_orient = self.find_orient(face)
-		print "\n180* turn of", face, "Face orientation", face_orient #  TODO remove after debug
-		buffer_orient = self.orient
+		print "Turning", face, "180 degrees. It is currently pointing", face_orient
+		buffer_orient = dict(self.orient) #  Create a copy (buffer_orient = self.orient would just create a alias)
 		if face_orient is 'D': #  Face held in claw_down
 			self.claw_down.half_turn()
 			self.claw_down.open_hand()
@@ -234,30 +208,12 @@ class Robot(object):
 			self.claw_right.open_hand()
 			self.claw_right.home_turn()
 			self.claw_right.close_hand()
- 			print
-			print 'Front 180* turn'
-			print 'init buffer_orient', buffer_orient
-			print 'init self.orient  ', self.orient
-			buffer_orient['D'] = self.orient.get('D') #  The face in the claw does not move
-			print "buffer_orient['D'] = self.orient['D']  buffer:", buffer_orient
-			print "                                  self.orient:", self.orient
-			buffer_orient['F'] = self.orient.get('L')
-			print "buffer_orient['F'] = self.orient['L']  buffer:", buffer_orient
-			print "                                  self.orient:", self.orient
-			buffer_orient['R'] = self.orient.get('F')
-			print "buffer_orient['R'] = self.orient['F']  buffer:", buffer_orient
-			print "                                  self.orient:", self.orient
-			buffer_orient['B'] = self.orient.get('R')
-			print "buffer_orient['B'] = self.orient['R']  buffer:", buffer_orient
-			print "                                  self.orient:", self.orient
-			buffer_orient['L'] = self.orient.get('B')
-			print "buffer_orient['L'] = self.orient['B']  buffer:", buffer_orient
-			print "                                  self.orient:", self.orient
- 			buffer_orient['U'] = self.orient.get('U')
- 			print "buffer_orient['U'] = self.orient['U']  buffer:", buffer_orient
- 			print "                                  self.orient:", self.orient
- 			print 'Done turning F face.'
- 			print
+			buffer_orient['D'] = self.orient['D'] #  The face in the claw does not move
+			buffer_orient['F'] = self.orient['L']
+			buffer_orient['R'] = self.orient['F'] 
+			buffer_orient['B'] = self.orient['R']
+			buffer_orient['L'] = self.orient['B'] 
+ 			buffer_orient['U'] = self.orient['U'] 
 		elif face_orient is 'R': #  Face held in claw_right
 			self.claw_right.half_turn()
 			self.claw_right.open_hand()
@@ -314,15 +270,15 @@ class Robot(object):
 			buffer_orient['B'] = self.orient['F'] #  R -> B
 			buffer_orient['L'] = self.orient['L'] #  B -> L
  			buffer_orient['U'] = self.orient['D']
- 		print 'Buffer', buffer_orient
 		self.orient = buffer_orient #  Update the orientation.
 		return self.orient 
 
 	def solve(self, solution):
 		self.claw_right.hand.write(self.claw_right.close_hand_deg)
 		self.claw_down.hand.write(self.claw_down.close_hand_deg)
-		print "ready"
-		time.sleep(2)
+		print "Place cube in claws within three seconds."
+		time.sleep(3)
+		print "Solving..."
 		prev = 0
 		moves = []
 		error_count = 0
@@ -337,24 +293,17 @@ class Robot(object):
 			rotations = step[0]
 			face = step[1]
 			if rotations is 1:
-				print step, self.orient
 				self.rotate_90(face)
-				print step, self.orient
 			elif rotations is 2:
-				print step, self.orient
 				self.rotate_180(face)
-				print step, self.orient
 			elif rotations is 3:
-				print step, self.orient
 				self.rotate_180(face)
-				print step, self.orient
 				self.rotate_90(face)
-				print step, self.orient
 		print "SOLVED!"
 		return 0
 	
 	def test(self):
-		test_solution = 'F1F3U1'#" D1D3 U1U3 L1L3 R1R3 F1F3 B1B3"
+		test_solution = "D1D3 U1U3 L1L3 R1R3 F1F3 B1B3"
 		print "Testing robot. Test pattern:", test_solution
 		self.solve(test_solution)
 
@@ -362,10 +311,10 @@ def main():
 	pins = [12,11,10,9]
 	positions = [180, 96, 10, 70, 10,
 				 180, 100, 25, 95, 45]
-	robot = Robot('/dev/ttyACM3', pins, positions)		
+	robot = Robot('/dev/ttyACM4', pins, positions)		
 	print "setup done"
 	robot.test()
-	return 0 #  TODO it does not exit (niether sys.exit(0) nor exit(0) work)
+	return 0 #  TODO it does not exit (neither sys.exit(0) nor exit(0) works)
 
 if __name__ == '__main__':
 	main()
@@ -378,4 +327,4 @@ if __name__ == '__main__':
 # please increment the following counter as a warning
 # to the next guy:
 # 
-# total_hours_wasted_here = 23
+# total_hours_wasted_here = 26

@@ -89,16 +89,19 @@ def main():
 	pins = [12,11,10,9]
 	positions = [180, 96, 10, 70, 10,
 				 180, 100, 25, 95, 45]
-	robot = arduino.Robot('/dev/ttyACM1', pins, positions, .2, .4) # .2, .4
-
-	#gui.enter_cube()
-	#input_facets = gui.to_facets()
-	#rubik = Cube(input_facets)
-	#rubik.set_cubies()
-	#rubik.print_cubies()
+	#  You will need to manually set the serial port. 
+	#  On Linux machines the serial port will be similar 
+	#  to '/dev/ttyACM'. Open up a terminal window and type:
+	#      $_  ls /dev | grep ttyACM 
+	#  to list devices. One of these should be your Arduino.
+	robot = arduino.Robot('/dev/ttyACM4', pins, positions)
+	gui.enter_cube()
+	input_facets = gui.to_facets()
+	rubik = Cube(input_facets)
+	rubik.set_cubies()
+	rubik.print_cubies()
 	#  The solver agorithom is written in c++
-	#solution = subprocess.check_output("./cubecompo " + rubik.cubies_arg(), shell=True)
-	solution = subprocess.check_output("./cubecompo " + "UR BL DB RB FL UB DL UF DF RF RD LU DFL BLU FDR LBD BUR UFR LFU RDB", shell=True)
+	solution = subprocess.check_output("./cubecompo " + rubik.cubies_arg(), shell=True)
 	print "Solution:", solution
 	robot.solve(solution)
 	return 0
