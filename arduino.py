@@ -30,10 +30,6 @@ from pyfirmata import Arduino, util
 import sys
 import time
 
-class Cube(object):
-	def __init__(self):
-		self.orient = {'D':'D', 'F':'F', 'R':'R', 'B':'B', 'L':'L', 'U':'U'} # TODO Does this really need to be it's own class?
-
 class Claw(object):
 	def __init__(self, arduino, wrist_pin, hand_pin, positions, hand_delay, quarter_turn_delay):
 		#  Configure Arduino
@@ -92,7 +88,7 @@ class Robot(object):
 		self.claw_right = Claw(arduino, pins[2], pins[3], positions[5:10], hand_delay, quarter_turn_delay)
 		print "Done."
 		print "Configured."
-		self.cube = Cube()
+		self.orient = {'D':'D', 'F':'F', 'R':'R', 'B':'B', 'L':'L', 'U':'U'}
 		#  Open the claws and put them in the correct orientation without a delay
 		self.claw_down.wrist.write(self.claw_down.home_turn_deg)
 		self.claw_down.hand.write(self.claw_down.open_hand_deg)
@@ -101,8 +97,8 @@ class Robot(object):
 		
 	def find_orient(self, face):
 		face_orient = ''
-		for orient in self.cube.orient.keys():
-			if face is self.cube.orient[orient]:
+		for orient in self.orient.keys():
+			if face is self.orient[orient]:
 				face_orient = orient
 				break
 		return face_orient
@@ -110,7 +106,7 @@ class Robot(object):
 	def rotate_90(self, face): 
 		face_orient = self.find_orient(face)
 		print "90* turn of", face, "Face orientation", face_orient, '\n' #  TODO remove after debug
-		buffer_orient = self.cube.orient
+		buffer_orient = self.orient
 		if face_orient is 'D': 
 			self.claw_down.quarter_turn()
 			self.claw_down.open_hand()
@@ -129,12 +125,12 @@ class Robot(object):
 			self.claw_right.open_hand()
 			self.claw_right.home_turn()
 			self.claw_right.close_hand()
-			buffer_orient['D'] = self.cube.orient['D'] #  The face in the claw does not move
-			buffer_orient['F'] = self.cube.orient['L']
-			buffer_orient['R'] = self.cube.orient['F'] 
-			buffer_orient['B'] = self.cube.orient['R']
-			buffer_orient['L'] = self.cube.orient['B'] 
- 			buffer_orient['U'] = self.cube.orient['U'] 
+			buffer_orient['D'] = self.orient['D'] #  The face in the claw does not move
+			buffer_orient['F'] = self.orient['L']
+			buffer_orient['R'] = self.orient['F'] 
+			buffer_orient['B'] = self.orient['R']
+			buffer_orient['L'] = self.orient['B'] 
+ 			buffer_orient['U'] = self.orient['U'] 
 		elif face_orient is 'R':
 			self.claw_right.quarter_turn()
 			self.claw_right.open_hand()
@@ -153,12 +149,12 @@ class Robot(object):
 			self.claw_down.open_hand()
 			self.claw_down.home_turn()
 			self.claw_down.close_hand()
-			buffer_orient['D'] = self.cube.orient['B'] 
-			buffer_orient['F'] = self.cube.orient['D']
-			buffer_orient['R'] = self.cube.orient['R'] #  The face in the claw does not move
-			buffer_orient['B'] = self.cube.orient['U'] 
-			buffer_orient['L'] = self.cube.orient['L'] 
- 			buffer_orient['U'] = self.cube.orient['F'] 
+			buffer_orient['D'] = self.orient['B'] 
+			buffer_orient['F'] = self.orient['D']
+			buffer_orient['R'] = self.orient['R'] #  The face in the claw does not move
+			buffer_orient['B'] = self.orient['U'] 
+			buffer_orient['L'] = self.orient['L'] 
+ 			buffer_orient['U'] = self.orient['F'] 
 		elif face_orient is 'L':
 			self.claw_right.open_hand()
 			self.claw_down.half_turn()
@@ -170,12 +166,12 @@ class Robot(object):
 			self.claw_right.open_hand()
 			self.claw_right.home_turn()
 			self.claw_right.close_hand()
-			buffer_orient['D'] = self.cube.orient['D'] #  The face in the claw does not move
-			buffer_orient['F'] = self.cube.orient['B'] 
-			buffer_orient['R'] = self.cube.orient['L'] 
-			buffer_orient['B'] = self.cube.orient['F'] 
-			buffer_orient['L'] = self.cube.orient['R']
- 			buffer_orient['U'] = self.cube.orient['U']
+			buffer_orient['D'] = self.orient['D'] #  The face in the claw does not move
+			buffer_orient['F'] = self.orient['B'] 
+			buffer_orient['R'] = self.orient['L'] 
+			buffer_orient['B'] = self.orient['F'] 
+			buffer_orient['L'] = self.orient['R']
+ 			buffer_orient['U'] = self.orient['U']
 		elif face_orient is 'U':
 			self.claw_down.open_hand()
 			self.claw_right.half_turn()
@@ -187,19 +183,19 @@ class Robot(object):
 			self.claw_down.open_hand()
 			self.claw_down.home_turn()
 			self.claw_down.close_hand()
-			buffer_orient['D'] = self.cube.orient['U'] #  The face in the claw does not move
-			buffer_orient['F'] = self.cube.orient['B'] #  L -> F
-			buffer_orient['R'] = self.cube.orient['R'] #  F -> R
-			buffer_orient['B'] = self.cube.orient['F'] #  R -> B
-			buffer_orient['L'] = self.cube.orient['L'] #  B -> L
- 			buffer_orient['U'] = self.cube.orient['D']
-		self.cube.orient = buffer_orient #  Update the orientation.
-		return self.cube.orient 
+			buffer_orient['D'] = self.orient['U'] #  The face in the claw does not move
+			buffer_orient['F'] = self.orient['B'] #  L -> F
+			buffer_orient['R'] = self.orient['R'] #  F -> R
+			buffer_orient['B'] = self.orient['F'] #  R -> B
+			buffer_orient['L'] = self.orient['L'] #  B -> L
+ 			buffer_orient['U'] = self.orient['D']
+		self.orient = buffer_orient #  Update the orientation.
+		return self.orient 
 		
 	def rotate_180(self, face): 
 		face_orient = self.find_orient(face)
 		print "180* turn of", face, "Face orientation", face_orient, '\n' #  TODO remove after debug
-		buffer_orient = self.cube.orient
+		buffer_orient = self.orient
 		if face_orient is 'D': #  Face held in claw_down
 			self.claw_down.half_turn()
 			self.claw_down.open_hand()
@@ -216,12 +212,12 @@ class Robot(object):
 			self.claw_right.open_hand()
 			self.claw_right.home_turn()
 			self.claw_right.close_hand()
-			buffer_orient['D'] = self.cube.orient['D'] #  The face in the claw does not move
-			buffer_orient['F'] = self.cube.orient['L']
-			buffer_orient['R'] = self.cube.orient['F'] 
-			buffer_orient['B'] = self.cube.orient['R']
-			buffer_orient['L'] = self.cube.orient['B'] 
- 			buffer_orient['U'] = self.cube.orient['U'] 
+			buffer_orient['D'] = self.orient['D'] #  The face in the claw does not move
+			buffer_orient['F'] = self.orient['L']
+			buffer_orient['R'] = self.orient['F'] 
+			buffer_orient['B'] = self.orient['R']
+			buffer_orient['L'] = self.orient['B'] 
+ 			buffer_orient['U'] = self.orient['U'] 
 		elif face_orient is 'R': #  Face held in claw_right
 			self.claw_right.half_turn()
 			self.claw_right.open_hand()
@@ -238,12 +234,12 @@ class Robot(object):
 			self.claw_down.open_hand()
 			self.claw_down.home_turn()
 			self.claw_down.close_hand()
-			buffer_orient['D'] = self.cube.orient['B'] 
-			buffer_orient['F'] = self.cube.orient['D']
-			buffer_orient['R'] = self.cube.orient['R'] #  The face in the claw does not move
-			buffer_orient['B'] = self.cube.orient['U'] 
-			buffer_orient['L'] = self.cube.orient['L'] 
- 			buffer_orient['U'] = self.cube.orient['F'] 
+			buffer_orient['D'] = self.orient['B'] 
+			buffer_orient['F'] = self.orient['D']
+			buffer_orient['R'] = self.orient['R'] #  The face in the claw does not move
+			buffer_orient['B'] = self.orient['U'] 
+			buffer_orient['L'] = self.orient['L'] 
+ 			buffer_orient['U'] = self.orient['F'] 
 		elif face_orient is 'L':
 			self.claw_right.open_hand()
 			self.claw_down.half_turn()
@@ -255,12 +251,12 @@ class Robot(object):
 			self.claw_right.open_hand()
 			self.claw_right.home_turn()
 			self.claw_right.close_hand()
-			buffer_orient['D'] = self.cube.orient['D'] #  The face in the claw does not move
-			buffer_orient['F'] = self.cube.orient['B'] 
-			buffer_orient['R'] = self.cube.orient['L'] 
-			buffer_orient['B'] = self.cube.orient['F'] 
-			buffer_orient['L'] = self.cube.orient['R']
- 			buffer_orient['U'] = self.cube.orient['U']
+			buffer_orient['D'] = self.orient['D'] #  The face in the claw does not move
+			buffer_orient['F'] = self.orient['B'] 
+			buffer_orient['R'] = self.orient['L'] 
+			buffer_orient['B'] = self.orient['F'] 
+			buffer_orient['L'] = self.orient['R']
+ 			buffer_orient['U'] = self.orient['U']
 		elif face_orient is 'U':
 			self.claw_down.open_hand()
 			self.claw_right.half_turn()
@@ -272,14 +268,14 @@ class Robot(object):
 			self.claw_down.open_hand()
 			self.claw_down.home_turn()
 			self.claw_down.close_hand()
-			buffer_orient['D'] = self.cube.orient['U'] #  The face in the claw does not move
-			buffer_orient['F'] = self.cube.orient['B'] #  L -> F
-			buffer_orient['R'] = self.cube.orient['R'] #  F -> R
-			buffer_orient['B'] = self.cube.orient['F'] #  R -> B
-			buffer_orient['L'] = self.cube.orient['L'] #  B -> L
- 			buffer_orient['U'] = self.cube.orient['D']
-		self.cube.orient = buffer_orient #  Update the orientation.
-		return self.cube.orient 
+			buffer_orient['D'] = self.orient['U'] #  The face in the claw does not move
+			buffer_orient['F'] = self.orient['B'] #  L -> F
+			buffer_orient['R'] = self.orient['R'] #  F -> R
+			buffer_orient['B'] = self.orient['F'] #  R -> B
+			buffer_orient['L'] = self.orient['L'] #  B -> L
+ 			buffer_orient['U'] = self.orient['D']
+		self.orient = buffer_orient #  Update the orientation.
+		return self.orient 
 
 	def solve(self, solution):
 		self.claw_right.hand.write(self.claw_right.close_hand_deg)
@@ -300,19 +296,19 @@ class Robot(object):
 			rotations = step[0]
 			face = step[1]
 			if rotations is 1:
-				print step, self.cube.orient
+				print step, self.orient
 				self.rotate_90(face)
-				print step, self.cube.orient
+				print step, self.orient
 			elif rotations is 2:
-				print step, self.cube.orient
+				print step, self.orient
 				self.rotate_180(face)
-				print step, self.cube.orient
+				print step, self.orient
 			elif rotations is 3:
-				print step, self.cube.orient
+				print step, self.orient
 				self.rotate_180(face)
-				print step, self.cube.orient
+				print step, self.orient
 				self.rotate_90(face)
-				print step, self.cube.orient
+				print step, self.orient
 			print "SOLVED!"
 		return 0
 	
@@ -325,7 +321,7 @@ def main():
 	pins = [12,11,10,9]
 	positions = [180, 96, 10, 70, 10,
 				 180, 100, 25, 95, 45]
-	robot = Robot('/dev/ttyACM5', pins, positions)		
+	robot = Robot('/dev/ttyACM6', pins, positions)		
 	print "setup done"
 	robot.test()
 	return 0 #  TODO it does not exit (niether sys.exit(0) nor exit(0) work)
