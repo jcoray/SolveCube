@@ -47,8 +47,7 @@ class Claw(object):
 		self.quarter_turn_delay = quarter_turn_delay
 		self.half_turn_delay = quarter_turn_delay * 2
 		self.hand_delay = hand_delay
-		#  Current Orientation 
-		#self.wrist_position = o
+		##  Current Orientation 
 	def home_turn(self):
 		self.wrist.write(self.home_turn_deg)
 		#  TODO the home turn could either be a half or quarter turn 
@@ -105,7 +104,7 @@ class Robot(object):
 		
 	def rotate_90(self, face): 
 		face_orient = self.find_orient(face)
-		print "90* turn of", face, "Face orientation", face_orient, '\n' #  TODO remove after debug
+		print "\n90* turn of", face, "Face orientation", face_orient #  TODO remove after debug
 		buffer_orient = self.orient
 		if face_orient is 'D': 
 			self.claw_down.quarter_turn()
@@ -125,12 +124,35 @@ class Robot(object):
 			self.claw_right.open_hand()
 			self.claw_right.home_turn()
 			self.claw_right.close_hand()
-			buffer_orient['D'] = self.orient['D'] #  The face in the claw does not move
-			buffer_orient['F'] = self.orient['L']
-			buffer_orient['R'] = self.orient['F'] 
-			buffer_orient['B'] = self.orient['R']
-			buffer_orient['L'] = self.orient['B'] 
- 			buffer_orient['U'] = self.orient['U'] 
+			print
+			print 'Front 90* turn'
+			print 'init buffer_orient', buffer_orient
+			print 'init self.orient  ', self.orient
+			side_d = self.orient['D']
+			print side_d
+			buffer_orient['D'] = side_d#  The face in the claw does not move
+			print "buffer_orient['D'] = self.orient['D']  buffer:", buffer_orient
+			print "                                  self.orient:", self.orient
+			side_f = self.orient['L']
+			print side_f
+			print "before switch self.orient", self.orient
+			buffer_orient['F'] = side_f
+			print "buffer_orient['F'] = self.orient['L']  buffer:", buffer_orient
+			print "                                  self.orient:", self.orient
+			buffer_orient['R'] = self.orient.get('F')
+			print "buffer_orient['R'] = self.orient['F']  buffer:", buffer_orient
+			print "                                  self.orient:", self.orient
+			buffer_orient['B'] = self.orient.get('R')
+			print "buffer_orient['B'] = self.orient['R']  buffer:", buffer_orient
+			print "                                  self.orient:", self.orient
+			buffer_orient['L'] = self.orient.get('B')
+			print "buffer_orient['L'] = self.orient['B']  buffer:", buffer_orient
+			print "                                  self.orient:", self.orient
+ 			buffer_orient['U'] = self.orient.get('U')
+ 			print "buffer_orient['U'] = self.orient['U']  buffer:", buffer_orient
+ 			print "                                  self.orient:", self.orient
+ 			print 'Done turning F face.'
+ 			print
 		elif face_orient is 'R':
 			self.claw_right.quarter_turn()
 			self.claw_right.open_hand()
@@ -194,7 +216,7 @@ class Robot(object):
 		
 	def rotate_180(self, face): 
 		face_orient = self.find_orient(face)
-		print "180* turn of", face, "Face orientation", face_orient, '\n' #  TODO remove after debug
+		print "\n180* turn of", face, "Face orientation", face_orient #  TODO remove after debug
 		buffer_orient = self.orient
 		if face_orient is 'D': #  Face held in claw_down
 			self.claw_down.half_turn()
@@ -212,12 +234,30 @@ class Robot(object):
 			self.claw_right.open_hand()
 			self.claw_right.home_turn()
 			self.claw_right.close_hand()
-			buffer_orient['D'] = self.orient['D'] #  The face in the claw does not move
-			buffer_orient['F'] = self.orient['L']
-			buffer_orient['R'] = self.orient['F'] 
-			buffer_orient['B'] = self.orient['R']
-			buffer_orient['L'] = self.orient['B'] 
- 			buffer_orient['U'] = self.orient['U'] 
+ 			print
+			print 'Front 180* turn'
+			print 'init buffer_orient', buffer_orient
+			print 'init self.orient  ', self.orient
+			buffer_orient['D'] = self.orient.get('D') #  The face in the claw does not move
+			print "buffer_orient['D'] = self.orient['D']  buffer:", buffer_orient
+			print "                                  self.orient:", self.orient
+			buffer_orient['F'] = self.orient.get('L')
+			print "buffer_orient['F'] = self.orient['L']  buffer:", buffer_orient
+			print "                                  self.orient:", self.orient
+			buffer_orient['R'] = self.orient.get('F')
+			print "buffer_orient['R'] = self.orient['F']  buffer:", buffer_orient
+			print "                                  self.orient:", self.orient
+			buffer_orient['B'] = self.orient.get('R')
+			print "buffer_orient['B'] = self.orient['R']  buffer:", buffer_orient
+			print "                                  self.orient:", self.orient
+			buffer_orient['L'] = self.orient.get('B')
+			print "buffer_orient['L'] = self.orient['B']  buffer:", buffer_orient
+			print "                                  self.orient:", self.orient
+ 			buffer_orient['U'] = self.orient.get('U')
+ 			print "buffer_orient['U'] = self.orient['U']  buffer:", buffer_orient
+ 			print "                                  self.orient:", self.orient
+ 			print 'Done turning F face.'
+ 			print
 		elif face_orient is 'R': #  Face held in claw_right
 			self.claw_right.half_turn()
 			self.claw_right.open_hand()
@@ -274,6 +314,7 @@ class Robot(object):
 			buffer_orient['B'] = self.orient['F'] #  R -> B
 			buffer_orient['L'] = self.orient['L'] #  B -> L
  			buffer_orient['U'] = self.orient['D']
+ 		print 'Buffer', buffer_orient
 		self.orient = buffer_orient #  Update the orientation.
 		return self.orient 
 
@@ -309,11 +350,11 @@ class Robot(object):
 				print step, self.orient
 				self.rotate_90(face)
 				print step, self.orient
-			print "SOLVED!"
+		print "SOLVED!"
 		return 0
 	
 	def test(self):
-		test_solution = 'L1L3'#" D1D3 U1U3 L1L3 R1R3 F1F3 B1B3"
+		test_solution = 'F1F3U1'#" D1D3 U1U3 L1L3 R1R3 F1F3 B1B3"
 		print "Testing robot. Test pattern:", test_solution
 		self.solve(test_solution)
 
@@ -321,7 +362,7 @@ def main():
 	pins = [12,11,10,9]
 	positions = [180, 96, 10, 70, 10,
 				 180, 100, 25, 95, 45]
-	robot = Robot('/dev/ttyACM6', pins, positions)		
+	robot = Robot('/dev/ttyACM3', pins, positions)		
 	print "setup done"
 	robot.test()
 	return 0 #  TODO it does not exit (niether sys.exit(0) nor exit(0) work)
