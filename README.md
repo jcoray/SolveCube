@@ -11,7 +11,7 @@ Created by Gabriel Norris and Jakob Coray, with advisement from Clint Gibson
 ##### Dependencies
 - Python 2.7.6
 - Tkinter
-- Pyfirmata '''pip install py
+- Pyfirmata 
 - Ardiuno IDE (tested on versions 1.0.5, 1.6.1, 1.6.3)
 
 #### Hardware
