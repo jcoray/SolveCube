@@ -311,7 +311,7 @@ def main():
 	pins = [12,11,10,9]
 	positions = [180, 96, 10, 70, 10,
 				 180, 100, 25, 95, 45]
-	robot = Robot('/dev/ttyACM4', pins, positions)		
+	robot = Robot('/dev/ttyACM0', pins, positions)		
 	print "setup done"
 	robot.test()
 	return 0 #  TODO it does not exit (neither sys.exit(0) nor exit(0) works)
