@@ -87,8 +87,8 @@ class Cube(object):
 
 def main():
 	pins = [12,11,10,9]
-	positions = [180, 96, 10, 70, 10,
-				 180, 100, 25, 95, 45]
+	positions = [180, 96, 44, 90, 10, #[3] and [4] are open and close, respectively.    The Original setup: [180,96,10,70,10,
+				 180, 100, 44, 90, 45] #I have experimentally changed these values.                          180,100,25,95,45
 	#  You may need to manually set the serial port. 
 	#  On Linux machines the serial port will be similar 
 	#  to '/dev/ttyACM'. Open up a terminal window and type:
