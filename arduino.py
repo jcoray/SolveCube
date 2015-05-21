@@ -28,6 +28,7 @@
 from pyfirmata import Arduino, util
 #  https://media.readthedocs.org/pdf/pyfirmata/latest/pyfirmata.pdf
 import sys
+import subprocess
 import time
 
 class Claw(object):
@@ -69,8 +70,20 @@ class Claw(object):
 		time.sleep(self.hand_delay)
 		
 class Robot(object):
-	def __init__(self, serial_port, pins, positions, hand_delay=.2, quarter_turn_delay=.4):
+	def __init__(self, pins, positions, hand_delay=.2, quarter_turn_delay=.4, serial_port=None):
 		"""A robotic cube manipulator. Delays are in seconds."""
+		if serial_port is None:
+			#  Try to automatically find the serial port if it is not specified. 
+			#  This works on Ubuntu and Debian, but may not work on OSes.
+			print "Attempting to auto connect to the Arduino..." 
+			serial_port = subprocess.check_output("ls /dev | grep ttyACM", shell=True)
+		print "Looking for Arduino on port %s." % (serial_port)
+		try:
+			Arduino(serial_port)
+		except SerialException:
+			raise SerialException("could not open port %s: Try unplugging and replugging in the Arduino. If that fails, enter 'ls /dev | grep ttyACM' into the terminal and manually set the port in the class declaration." % (serial_port))
+			sys.exit(2)
+		
 		sys.stdout.write("Connecting to Arduino... ") #  Print w/o \n
 		arduino = Arduino(serial_port)
 		print "Done."
