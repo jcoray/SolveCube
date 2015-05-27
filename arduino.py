@@ -24,7 +24,7 @@
 #	                          (90) --+
 #	                                 | (180)
 	
-
+from serial import SerialException
 from pyfirmata import Arduino, util
 #  https://media.readthedocs.org/pdf/pyfirmata/latest/pyfirmata.pdf
 import sys
@@ -72,6 +72,7 @@ class Claw(object):
 class Robot(object):
 	def __init__(self, pins, positions, hand_delay=.2, quarter_turn_delay=.4, serial_port=None):
 		"""A robotic cube manipulator. Delays are in seconds."""
+		arduino = Arduino
 		if serial_port is None:
 			#  Try to automatically find the serial port if it is not specified. 
 			#  This works on Ubuntu and Debian, but may not work on OSes.
@@ -79,9 +80,9 @@ class Robot(object):
 			serial_port = subprocess.check_output("ls /dev | grep ttyACM", shell=True)
 		print "Looking for Arduino on port %s." % (serial_port)
 		try:
-			Arduino(serial_port)
+			arduino = Arduino(serial_port)
 		except SerialException:
-			raise SerialException("could not open port %s: Try unplugging and replugging in the Arduino. If that fails, enter 'ls /dev | grep ttyACM' into the terminal and manually set the port in the class declaration." % (serial_port))
+			raise SerialException("Error could not open port %s: Try unplugging and replugging in the Arduino. If that fails, enter 'ls /dev | grep ttyACM' into the terminal and manually set the port in the class declaration." % (serial_port))
 			sys.exit(2)
 		
 		sys.stdout.write("Connecting to Arduino... ") #  Print w/o \n
@@ -340,4 +341,4 @@ if __name__ == '__main__':
 # please increment the following counter as a warning
 # to the next guy:
 # 
-# total_hours_wasted_here = 26
+# total_hours_wasted_here = 29
