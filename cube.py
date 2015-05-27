@@ -94,7 +94,7 @@ def main():
 	#  to '/dev/ttyACM'. Open up a terminal window and type:
 	#      $_  ls /dev | grep ttyACM 
 	#  to list devices. One of these should be your Arduino.
-	robot = arduino.Robot('/dev/ttyACM0', pins, positions)
+	robot = arduino.Robot('/dev/ttyACM2', pins, positions)
 	gui.enter_cube()
 	input_facets = gui.to_facets()
 	rubik = Cube(input_facets)
