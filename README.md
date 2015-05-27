@@ -19,7 +19,7 @@ Created by Gabriel Norris and Jakob Coray, with advisement from Clint Gibson
 - Raspberry Pi 2 Model B
 - Standard Servos (4)
 - 3 Amp power supply 
-- Claws (2) Designed by Kas of the Arduino forums <http://forum.arduino.cc/index.php?topic=271827.0>
+- Modified claws (2)
 
 ## Installation Instructions
 1. Download repository
