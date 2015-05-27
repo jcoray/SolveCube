@@ -27,6 +27,6 @@ Created by Gabriel Norris and Jakob Coray, with advisement from Clint Gibson
 3. Install tkinter ```sudo apt-get install python-tk```
 4. Install pip ```sudo apt-get install python-pip```
 5. Install pyfirmata ```sudo pip install pyfirmata```
-6. Connect the Arduino via USB. See comments in arduino.py for details on setting the serial port.
+6. Connect the Arduino via USB.
 7. Open the Arduino IDE and upload ServoFirmata.ino (File/Examples/Firmata/ServoFirmata). 
 8. Run cube.py ```./cube.py```
