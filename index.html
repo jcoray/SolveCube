@@ -23,7 +23,7 @@
 <a id="solvecube" class="anchor" href="#solvecube" aria-hidden="true"><span class="octicon octicon-link"></span></a>SolveCube</h3>
 
 <p>The simplest method of solving a Rubik's Cube is to make random moves. While it may be fun to calculate how long that would take, there are better methods which are both faster and more efficient. We use Jaap Scherphuis's implementation of Thistlethwaite's algorithm to find a solution in around 150 milliseconds. </p>
-
+<img src="robot_up.jpg" alt="A view of the robot.">
 <h3>
 <a id="ways-of-defining-the-cube" class="anchor" href="#ways-of-defining-the-cube" aria-hidden="true"><span class="octicon octicon-link"></span></a>Ways of Defining the Cube</h3>
 Each aspect of the program defines the cube in a different way. The GUI uses an unordered collection of arrays for each face. The cube module converts the GUI's output into facet notation (see Cube.print_facets). It then converts facet notation in the cubie (Singmaster) notation by matching the facets to a key set in a dictionary. A cubie is simply a block. Cubecompo.cpp inputs the cubies and spits out Singmaster solving notation. Arduino.py puts the solution into a machine readable format and then keeps track of the cubes position relative to its absolute orientation. It does not keep track of the cubies themselves.
