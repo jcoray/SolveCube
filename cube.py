@@ -86,23 +86,23 @@ class Cube(object):
                 +----+----+----+"""
 
 def main():
-	pins = [12,11,10,9]
-	positions = [180, 96, 44, 90, 10, #[3] and [4] are open and close, respectively.    The Original setup: [180,96,10,70,10,
-				 180, 100, 44, 90, 45] #I have experimentally changed these values.                          180,100,25,95,45
+	pins = [9,10,12,11] 		
+	positions = [162, 80, 2, 55, 2, #[3] and [4] are open and close, respectively.    The Original setup: [180,96,10,70,10,
+				 180, 21, 176, 99, 38] #I have experimentally changed these values.                          180,100,25,95,45
 	#  You may need to manually set the serial port. 
 	#  On Linux machines the serial port will be similar 
 	#  to '/dev/ttyACM'. Open up a terminal window and type:
 	#      $_  ls /dev | grep ttyACM 
 	#  to list devices. One of these should be your Arduino.
-	robot = arduino.Robot(pins, positions)
-	gui.enter_cube()
+	robot = arduino.Robot(pins, positions, serial_port='/dev/ttyACM1')
+	"""gui.enter_cube()
 	input_facets = gui.to_facets()
 	rubik = Cube(input_facets)
 	rubik.set_cubies()
-	rubik.print_cubies()
+	rubik.print_cubies()"""
 	#  The solver algorithm is written in c++. It needs to be compiled. 
-	solution = subprocess.check_output("./cubecompo " + rubik.cubies_arg(), shell=True)
-	#solution = subprocess.check_output("./cubecompo " + 'UL DB BR FL BL DR FD RU FR UB LD FU FDR FUL BDL RBU FLD RUF DBR LUB', shell=True)
+	#solution = subprocess.check_output("./cubecompo " + rubik.cubies_arg(), shell=True)
+	solution = subprocess.check_output("./cubecompo " + 'UL DB BR FL BL DR FD RU FR UB LD FU FDR FUL BDL RBU FLD RUF DBR LUB', shell=True)
 	print "Solution:", solution
 	robot.solve(solution)
 	return 0

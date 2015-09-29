@@ -70,7 +70,7 @@ class Claw(object):
 		time.sleep(self.hand_delay)
 		
 class Robot(object):
-	def __init__(self, pins, positions, hand_delay=.2, quarter_turn_delay=.4, serial_port=None):
+	def __init__(self, pins, positions, hand_delay=.4, quarter_turn_delay=.8, serial_port=None):
 		"""A robotic cube manipulator. Delays are in seconds."""
 		arduino = Arduino
 		if serial_port is None:
@@ -78,6 +78,7 @@ class Robot(object):
 			#  This works on Ubuntu and Debian, but may not work on OSes.
 			print "Attempting to auto connect to the Arduino..." 
 			serial_port = subprocess.check_output("ls /dev | grep ttyACM", shell=True)
+			serial_port = serial_port.rstrip()
 		print "Looking for Arduino on port %s." % (serial_port)
 		try:
 			arduino = Arduino(serial_port)
@@ -288,9 +289,15 @@ class Robot(object):
 		return self.orient 
 
 	def solve(self, solution):
+		
+		#self.claw_down.wrist.write(self.claw_down.home_turn_deg)
+		#self.claw_down.hand.write(self.claw_down.open_hand_deg)
+		#self.claw_right.wrist.write(self.claw_right.home_turn_deg)
+		#self.claw_right.hand.write(self.claw_right.open_hand_deg)
+		print "Place cube in claws within two seconds."
+		#time.sleep(2)
 		self.claw_right.hand.write(self.claw_right.close_hand_deg)
 		self.claw_down.hand.write(self.claw_down.close_hand_deg)
-		print "Place cube in claws within three seconds."
 		time.sleep(3)
 		print "Solving..."
 		prev = 0
@@ -322,10 +329,11 @@ class Robot(object):
 		self.solve(test_solution)
 
 def main():	
-	pins = [12,11,10,9]
-	positions = [180, 96, 44, 90, 10, #[3] and [4] are open and close, respectively.    The Original setup: [180,96,10,70,10,
-				 180, 100, 44, 90, 45] #I have experimentally changed these values.                          180,100,25,95,45
-	robot = Robot(pins, positions)		
+	pins = [9,10,12,11]
+		   
+	positions = [162, 80, 2, 55, 2, #[3] and [4] are open and close, respectively.    The Original setup: [180,96,10,70,10,
+				 180, 21, 176, 99, 38] #I have experimentally changed these values.                          180,100,25,95,45
+	robot = Robot(pins, positions, serial_port='/dev/ttyACM1')		
 	print "setup done"
 	robot.test()
 	return 0 #  TODO it does not exit (neither sys.exit(0) nor exit(0) works)
@@ -341,4 +349,4 @@ if __name__ == '__main__':
 # please increment the following counter as a warning
 # to the next guy:
 # 
-# total_hours_wasted_here = 29
+# total_hours_wasted_here = 35
