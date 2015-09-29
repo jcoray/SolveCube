@@ -47,18 +47,25 @@ class Claw(object):
 		self.quarter_turn_delay = quarter_turn_delay
 		self.half_turn_delay = quarter_turn_delay * 2
 		self.hand_delay = hand_delay
-		#  TODO add Current Orientation 
+		#  Current Orientation 
+		self.turned = 'home'
 	def home_turn(self):
 		self.wrist.write(self.home_turn_deg)
-		#  TODO the home turn could either be a half or quarter turn 
-		#  It would be best to optimize it to know the delay
-		time.sleep(self.half_turn_delay)
+		#  The home turn could either be a half or quarter turn 
+		#  It is optimized the delay by checking the orientation 
+		if self.turned is 'quarter':
+			time.sleep(self.quarter_turn_delay)
+		else if self.turned is 'half':
+			time.sleep(self.half_turn_delay)
+		self.turned = 'home'
 	def quarter_turn(self):
 		self.wrist.write(self.quarter_turn_deg)
 		time.sleep(self.quarter_turn_delay)
+		self.turned = 'quarter'
 	def half_turn(self):
 		self.wrist.write(self.half_turn_deg)
 		time.sleep(self.half_turn_delay)
+		self.turned = 'half'
 
 	def open_hand(self):
 		self.hand.write(self.open_hand_deg)
