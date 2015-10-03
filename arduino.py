@@ -77,11 +77,10 @@ class Robot(object):
 			#  Try to automatically find the serial port if it is not specified. 
 			#  This works on Ubuntu and Debian, but may not work on OSes.
 			print "Attempting to auto connect to the Arduino..." 
-			serial_port = subprocess.check_output("ls /dev | grep ttyACM", shell=True)
-			serial_port = serial_port.rstrip()
+			serial_port = subprocess.check_output("ls /dev | grep ttyACM", shell=True).rstrip()
 		print "Looking for Arduino on port %s." % (serial_port)
 		try:
-			arduino = Arduino(serial_port)
+			arduino = Arduino('/dev/'+serial_port)
 		except SerialException:
 			raise SerialException("Error could not open port %s: Try unplugging and replugging in the Arduino. If that fails, enter 'ls /dev | grep ttyACM' into the terminal and manually set the port in the class declaration." % (serial_port))
 			sys.exit(2)
@@ -331,9 +330,9 @@ class Robot(object):
 def main():	
 	pins = [9,10,12,11]
 		   
-	positions = [162, 80, 2, 55, 2, #[3] and [4] are open and close, respectively.    The Original setup: [180,96,10,70,10,
-				 180, 21, 176, 99, 38] #I have experimentally changed these values.                          180,100,25,95,45
-	robot = Robot(pins, positions, serial_port='/dev/ttyACM1')		
+	positions = [132, 83, 2, 55, 2, #[3] and [4] are open and close, respectively.    The Original setup: [180,96,10,70,10,
+				 132, 83, 176, 99, 38] #I have experimentally changed these values.                          180,100,25,95,45
+	robot = Robot(pins, positions, serial_port='/dev/ttyACM3')		
 	print "setup done"
 	robot.test()
 	return 0 #  TODO it does not exit (neither sys.exit(0) nor exit(0) works)
@@ -349,4 +348,4 @@ if __name__ == '__main__':
 # please increment the following counter as a warning
 # to the next guy:
 # 
-# total_hours_wasted_here = 35
+# total_hours_wasted_here = 45
