@@ -72,30 +72,30 @@ class Claw(object):
 class Robot(object):
 	def __init__(self, pins, positions, hand_delay=.4, quarter_turn_delay=.8, serial_port=None):
 		"""A robotic cube manipulator. Delays are in seconds."""
-		arduino = Arduino
+		self.arduino = Arduino
 		if serial_port is None:
 			#  Try to automatically find the serial port if it is not specified. 
 			#  This works on Ubuntu and Debian, but may not work on OSes.
 			print "Attempting to auto connect to the Arduino..." 
-			serial_port = subprocess.check_output("ls /dev | grep ttyACM", shell=True).rstrip()
+			serial_port = '/dev/'+subprocess.check_output("ls /dev | grep ttyACM", shell=True).rstrip()
 		print "Looking for Arduino on port %s." % (serial_port)
 		try:
-			arduino = Arduino('/dev/'+serial_port)
+			self.arduino = Arduino(serial_port)
 		except SerialException:
 			raise SerialException("Error could not open port %s: Try unplugging and replugging in the Arduino. If that fails, enter 'ls /dev | grep ttyACM' into the terminal and manually set the port in the class declaration." % (serial_port))
 			sys.exit(2)
 		
 		sys.stdout.write("Connecting to Arduino... ") #  Print w/o \n
-		arduino = Arduino(serial_port)
+		self.arduino = Arduino(serial_port)
 		print "Done."
 		print "Configuring Arduino..."
-		iterator = util.Iterator(arduino)
+		iterator = util.Iterator(self.arduino)
 		iterator.start()
 		sys.stdout.write("    Configuring down_claw... ") #  Print w/o \n
-		self.claw_down = Claw(arduino, pins[0], pins[1], positions[0:5], hand_delay, quarter_turn_delay)
+		self.claw_down = Claw(self.arduino, pins[0], pins[1], positions[0:5], hand_delay, quarter_turn_delay)
 		print "Done."
 		sys.stdout.write("    Configuring up_claw... ") #  Print w/o \n
-		self.claw_right = Claw(arduino, pins[2], pins[3], positions[5:10], hand_delay, quarter_turn_delay)
+		self.claw_right = Claw(self.arduino, pins[2], pins[3], positions[5:10], hand_delay, quarter_turn_delay)
 		print "Done."
 		print "Configured."
 		self.orient = {'D':'D', 'F':'F', 'R':'R', 'B':'B', 'L':'L', 'U':'U'}
@@ -293,11 +293,11 @@ class Robot(object):
 		#self.claw_down.hand.write(self.claw_down.open_hand_deg)
 		#self.claw_right.wrist.write(self.claw_right.home_turn_deg)
 		#self.claw_right.hand.write(self.claw_right.open_hand_deg)
-		print "Place cube in claws within two seconds."
-		#time.sleep(2)
+		print "Place cube in claws within three seconds."
+		time.sleep(3)
 		self.claw_right.hand.write(self.claw_right.close_hand_deg)
 		self.claw_down.hand.write(self.claw_down.close_hand_deg)
-		time.sleep(3)
+		time.sleep(4)
 		print "Solving..."
 		prev = 0
 		moves = []
@@ -323,16 +323,20 @@ class Robot(object):
 		return 0
 	
 	def test(self):
-		test_solution = "D1D3 U1U3 L1L3 R1R3 F1F3 B1B3"
+		test_solution = "R1R3R1R3R1R3"#"D1D3 U1U3 L1L3 R1R3 F1F3 B1B3"
 		print "Testing robot. Test pattern:", test_solution
 		self.solve(test_solution)
 
 def main():	
 	pins = [9,10,12,11]
-		   
-	positions = [132, 83, 2, 55, 2, #[3] and [4] are open and close, respectively.    The Original setup: [180,96,10,70,10,
-				 132, 83, 176, 99, 38] #I have experimentally changed these values.                          180,100,25,95,45
-	robot = Robot(pins, positions, serial_port='/dev/ttyACM3')		
+	positions = [172, 86, 8, 132, 75,
+				180, 95, 17, 132, 75] 
+	#  You may need to manually set the serial port. 
+	#  On Linux machines the serial port will be similar 
+	#  to '/dev/ttyACM'. Open up a terminal window and type:
+	#      $_  ls /dev | grep ttyACM 
+	#  to list devices. One of these should be your Arduino.
+	robot = Robot(pins, positions)
 	print "setup done"
 	robot.test()
 	return 0 #  TODO it does not exit (neither sys.exit(0) nor exit(0) works)

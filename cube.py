@@ -79,7 +79,7 @@ class Cube(object):
 +----+----+----++----+----+----++----+----+----++----+----+----+
                 +----+----+----+
                 | 41 | 42 | 43 |
-                +----+----+----+
+                +----+----+----+	
                 | 44 | D  | 45 |
                 +----+----+----+
                 | 46 | 47 | 48 |
@@ -87,22 +87,23 @@ class Cube(object):
 
 def main():
 	pins = [9,10,12,11]
-	positions = [165, 82, 3, 132, 75,
-				180, 95, 17, 132, 75] 
+	positions = [172, 86, 8, 132, 75,
+				 180, 95, 17, 132, 75] 
 	#  You may need to manually set the serial port. 
 	#  On Linux machines the serial port will be similar 
 	#  to '/dev/ttyACM'. Open up a terminal window and type:
 	#      $_  ls /dev | grep ttyACM 
 	#  to list devices. One of these should be your Arduino.
 	robot = arduino.Robot(pins, positions)
-	"""gui.enter_cube()
+	gui.enter_cube()
 	input_facets = gui.to_facets()
 	rubik = Cube(input_facets)
 	rubik.set_cubies()
-	rubik.print_cubies()"""
+	rubik.print_cubies()
 	#  The solver algorithm is written in c++. It needs to be compiled. 
-	#solution = subprocess.check_output("./cubecompo " + rubik.cubies_arg(), shell=True)
-	solution = subprocess.check_output("./cubecompo " + 'UL DB BR FL BL DR FD RU FR UB LD FU FDR FUL BDL RBU FLD RUF DBR LUB', shell=True)
+	solution = subprocess.check_output("./cubecompo " + rubik.cubies_arg(), shell=True)
+	#solution = subprocess.check_output("./cubecompo " + ' LU LF LD UB DF RD LB BD RB FU RF RU UBL FLD LBD RUF ULF RBU RDB FDR', shell=True)
+
 	print "Solution:", solution
 	robot.solve(solution)
 	return 0
